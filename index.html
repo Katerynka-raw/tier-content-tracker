@@ -296,7 +296,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
 
 /* Fish grid */
 .fish-grid-section{margin-bottom:20px;}
-.fish-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;}
+.fish-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
 .fish-cell{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px 4px;text-align:center;cursor:pointer;transition:all .15s;}
 .fish-cell:hover{border-color:var(--line2);}
 .fish-cell.today{border-color:var(--orange);background:rgba(255,107,53,0.08);}
@@ -304,6 +304,9 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
 .fish-cell.logged.karass{border-color:rgba(155,127,232,0.3);background:var(--purple-dim);}
 .fish-cell.logged.krop{border-color:var(--accent-border);background:var(--accent-dim);}
 .fish-cell.logged.sword{border-color:rgba(255,107,53,0.3);background:var(--orange-dim);}
+.fish-cell.fish-weekend{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.04);opacity:.4;cursor:default!important;}
+.fish-cell.fish-missed{background:var(--surface);border-color:var(--line);opacity:.6;}
+.fish-cell.fish-missed .fish-emoji-small{color:var(--muted);}
 .fish-day-num{font-family:'Unbounded',sans-serif;font-size:8px;font-weight:700;color:var(--muted);}
 .fish-cell.today .fish-day-num{color:var(--orange);}
 .fish-cell.logged .fish-day-num{color:var(--text);}
@@ -1474,17 +1477,92 @@ function renderAsaichi(){
   // Today note
   if(todayLog?.note) document.getElementById('todayNote').value=todayLog.note;
 
-  // Fish grid
+  // Fish grid — real calendar dates, 7-col layout starting Monday
   const grid=document.getElementById('fishGrid');
   grid.innerHTML='';
-  for(let d=1;d<=workDays;d++){
+
+  // Add weekday headers
+  ['пн','вт','ср','чт','пт','сб','нд'].forEach(wd=>{
+    const h=document.createElement('div');
+    h.style.cssText='text-align:center;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:4px 0;';
+    h.textContent=wd;
+    grid.appendChild(h);
+  });
+
+  const todayStr=toDateStr(new Date());
+  const nowD=new Date(); nowD.setHours(0,0,0,0);
+  const yr=nowD.getFullYear(), mo=nowD.getMonth();
+  const daysInMonth=new Date(yr,mo+1,0).getDate();
+
+  // count total workdays in month
+  let totalWorkdays=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const dow=new Date(yr,mo,d).getDay();
+    if(dow!==0&&dow!==6) totalWorkdays++;
+  }
+
+  // count workdays passed up to and including today
+  let workdaysPassed=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(yr,mo,d); dt.setHours(0,0,0,0);
+    const dow=dt.getDay();
+    if(dow!==0&&dow!==6){
+      if(dt<=nowD) workdaysPassed++;
+    }
+  }
+
+  const expectedPct=totalWorkdays?Math.round((workdaysPassed/totalWorkdays)*100):0;
+  document.getElementById('asaichiSub').textContent=
+    `tier · ${dailyTarget}% на день · ${totalWorkdays} робочих днів · очікується ${expectedPct}%`;
+
+  // offset: first day of month
+  const firstDow=new Date(yr,mo,1).getDay();
+  const offset=firstDow===0?6:firstDow-1;
+  for(let i=0;i<offset;i++){
+    const blank=document.createElement('div');
+    grid.appendChild(blank);
+  }
+
+  // render each day
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(yr,mo,d); dt.setHours(0,0,0,0);
+    const ds=toDateStr(dt);
+    const dow=dt.getDay();
+    const isWeekend=dow===0||dow===6;
+    const isToday=ds===todayStr;
+    const isPast=dt<nowD;
+    const log=dayLogs[ds];
+
+    let fishKey=null;
+    if(!isWeekend&&(isPast||isToday)&&log?.fish) fishKey=log.fish;
+
     const cell=document.createElement('div');
-    const isToday=d===workDays; // placeholder - needs start date
-    const log=null; // will be populated when start date feature added
-    cell.className='fish-cell'+(isToday?' today':'');
-    const targetPct=Math.round((d/workDays)*100);
-    cell.innerHTML=`<div class="fish-day-num">${d}</div><div class="fish-pct-small">${targetPct}%</div><div class="fish-emoji-small">🐟</div>`;
-    cell.addEventListener('click',()=>openFishDay(d));
+    let cls='fish-cell';
+    if(isWeekend) cls+=' fish-weekend';
+    else if(isToday) cls+=' today';
+    else if(isPast&&log) cls+=` logged ${log.fish||''}`;
+    else if(isPast&&!log) cls+=' fish-missed';
+
+    let emoji='';
+    if(isWeekend) emoji='😴';
+    else if(fishKey==='karass') emoji='🐟';
+    else if(fishKey==='skumbria') emoji='🎏';
+    else if(fishKey==='shark') emoji='🦈';
+    else if(isPast) emoji='—';
+    else emoji='·';
+
+    const gainPct=log?.gainPct!=null?`+${log.gainPct}%`:'';
+
+    cell.className=cls;
+    cell.innerHTML=`
+      <div class="fish-day-num">${d}</div>
+      ${gainPct?`<div class="fish-pct-small">${gainPct}</div>`:''}
+      <div class="fish-emoji-small">${emoji}</div>`;
+
+    if(!isWeekend){
+      cell.style.cursor='pointer';
+      cell.addEventListener('click',()=>openFishDay(ds, d, log));
+    }
     grid.appendChild(cell);
   }
 
@@ -1512,9 +1590,28 @@ function renderAsaichi(){
   }).join('');
 }
 
-window.openFishDay=function(dayNum){
-  document.getElementById('fishDayTitle').textContent=`День ${dayNum}`;
-  document.getElementById('fishDayContent').textContent='Натисни "Оцінити продуктивність" на сьогодні щоб заповнити картку дня.';
+window.openFishDay=function(dateStr, dayNum, log){
+  const dt=new Date(dateStr+'T00:00:00');
+  const label=dt.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('fishDayTitle').textContent=label;
+  const todayStr=toDateStr(new Date());
+  let html='';
+  if(log){
+    const fishKey=log.fish||'skumbria';
+    const fishName={karass:'Карась 🐟',skumbria:'Скумбрія 🎏',shark:'Акула 🦈'};
+    html+=`<div style="margin-bottom:12px">
+      <span style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;color:var(--orange)">${log.gainPct||0}%</span>
+      <span style="color:var(--muted);font-size:12px;margin-left:8px">приріст за день</span>
+    </div>`;
+    html+=`<div style="margin-bottom:10px"><b>${fishName[fishKey]}</b></div>`;
+    if(log.verdict) html+=`<div style="margin-bottom:10px;color:var(--text)">${log.verdict}</div>`;
+    if(log.note) html+=`<div style="padding:10px;background:var(--surface);border-radius:8px;font-size:13px;color:var(--muted);line-height:1.6">"${log.note}"</div>`;
+  } else if(dateStr===todayStr){
+    html='<div style="color:var(--accent)">Сьогодні! Опиши свій день і натисни "Оцінити продуктивність" вгорі ↑</div>';
+  } else {
+    html='<div style="color:var(--muted)">Цей день не було залоговано.</div>';
+  }
+  document.getElementById('fishDayContent').innerHTML=html;
   document.getElementById('fishDayModal').classList.add('open');
 }
 
@@ -1543,7 +1640,12 @@ window.runAiEval=async function(){
   try {
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':'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',
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
