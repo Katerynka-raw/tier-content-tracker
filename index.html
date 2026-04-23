@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tier Content Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f; --surface:#111118; --card:#16161f; --card2:#1c1c28;
+  --accent:#c8ff00; --accent-dim:rgba(200,255,0,0.08); --accent-border:rgba(200,255,0,0.18);
+  --orange:#ff6b35; --orange-dim:rgba(255,107,53,0.1);
+  --purple:#9b7fe8; --purple-dim:rgba(155,127,232,0.1);
+  --green:#3ecf8e; --green-dim:rgba(62,207,142,0.1);
+  --red:#ff4d6d; --red-dim:rgba(255,77,109,0.1);
+  --blue:#4da6ff; --blue-dim:rgba(77,166,255,0.1);
+  --pink:#ff6eb4; --pink-dim:rgba(255,110,180,0.1);
+  --text:#f0f0f8; --muted:#6b6b85; --line:rgba(255,255,255,0.06); --line2:rgba(255,255,255,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.4;}
+.orb1{position:fixed;top:-300px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(200,255,0,0.04) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.orb2{position:fixed;bottom:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(155,127,232,0.05) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+/* NAV */
+.tabs-bar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px;overflow-x:auto;scrollbar-width:none;}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.tabs-logo{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-right:20px;white-space:nowrap;flex-shrink:0;}
+.tab-btn{background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;padding:16px 13px;cursor:pointer;position:relative;transition:color .2s;white-space:nowrap;flex-shrink:0;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--accent);}
+.tab-btn.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0;}
+.tab-btn.asaichi{color:var(--orange);}
+.tab-btn.asaichi.active{color:var(--orange);}
+.tab-btn.asaichi.active::after{background:var(--orange);}
+.sync-badge{margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;padding:5px 12px;border-radius:100px;}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:syncPulse 2s infinite;}
+@keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* PAGES */
+.page{display:none;padding:24px 20px 80px;max-width:920px;margin:0 auto;position:relative;z-index:1;}
+.page.active{display:block;}
+.page-header{margin-bottom:28px;}
+.page-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.page-title{font-family:'Unbounded',sans-serif;font-size:clamp(22px,5vw,34px);font-weight:900;line-height:1.1;letter-spacing:-1px;}
+.page-title span{color:var(--accent);}
+
+/* OVERVIEW */
+.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.ov-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;overflow:hidden;}
+.ov-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.ov-card.lime::before{background:var(--accent);}
+.ov-card.orange::before{background:var(--orange);}
+.ov-card.purple::before{background:var(--purple);}
+.ov-card.blue::before{background:var(--blue);}
+.ov-val{font-family:'Unbounded',sans-serif;font-size:clamp(20px,4vw,32px);font-weight:900;line-height:1;margin-bottom:4px;}
+.ov-card.lime .ov-val{color:var(--accent);}
+.ov-card.orange .ov-val{color:var(--orange);}
+.ov-card.purple .ov-val{color:var(--purple);}
+.ov-card.blue .ov-val{color:var(--blue);}
+.ov-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+
+/* WARNINGS */
+.warnings-wrap{margin-bottom:16px;}
+.warning-item{background:var(--red-dim);border:1px solid rgba(255,77,109,0.25);border-radius:12px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:13px;}
+.wi-text{flex:1;}
+.wi-days{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--red);flex-shrink:0;}
+
+/* SLIDERS */
+.month-settings{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:20px;}
+.section-title{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.sliders-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.slider-group label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.slider-val{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:900;color:var(--accent);}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--line2);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 10px rgba(200,255,0,0.5);transition:transform .15s;}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
+
+/* CALENDAR */
+.calendar-wrap{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:20px;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.cal-month{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;}
+.cal-arrow{background:var(--card2);border:1px solid var(--line2);color:var(--text);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:border-color .15s;}
+.cal-arrow:hover{border-color:var(--accent);color:var(--accent);}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:5px;}
+.cal-wd{text-align:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:5px 0;}
+.cal-wd.weekend{color:rgba(155,127,232,0.5);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{min-height:70px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px;position:relative;cursor:pointer;transition:border-color .15s;}
+.cal-cell:hover{border-color:var(--line2);}
+.cal-cell.today{border-color:var(--accent);}
+.cal-cell.weekend-cell{background:rgba(155,127,232,0.04);}
+.cal-cell.other-month{opacity:.2;pointer-events:none;}
+.cal-day-num{font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px;}
+.cal-cell.today .cal-day-num{color:var(--accent);}
+.cal-cell.weekend-cell .cal-day-num{color:rgba(155,127,232,0.6);}
+.cal-add-hint{position:absolute;top:5px;right:5px;font-size:10px;opacity:0;transition:opacity .15s;}
+.cal-cell:hover .cal-add-hint{opacity:.4;}
+.cal-items{display:flex;flex-direction:column;gap:2px;}
+.cal-item{border-radius:3px;padding:1px 4px;font-size:7px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.cal-item.simple{background:var(--green-dim);color:var(--green);border:1px solid rgba(62,207,142,0.2);}
+.cal-item.medium{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(255,107,53,0.2);}
+.cal-item.complex{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,109,0.2);}
+.cal-item.photo{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(155,127,232,0.2);}
+.cal-item.design{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(77,166,255,0.2);}
+.cal-item.shoot{background:rgba(255,110,180,0.1);color:var(--pink);border:1px solid rgba(255,110,180,0.2);}
+
+/* CONTENT CARDS LIST */
+.content-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.content-card-row{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .2s;cursor:pointer;}
+.content-card-row:hover{border-color:var(--line2);}
+.content-card-head{display:flex;align-items:center;gap:12px;padding:14px 18px;}
+.complexity-badge{flex-shrink:0;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.complexity-badge.simple{background:var(--green-dim);}
+.complexity-badge.medium{background:var(--orange-dim);}
+.complexity-badge.complex{background:var(--red-dim);}
+.complexity-badge.photo{background:var(--purple-dim);}
+.complexity-badge.design{background:var(--blue-dim);}
+.content-info{flex:1;min-width:0;}
+.content-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.content-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.resp-badge{border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700;}
+.resp-tier{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border);}
+.resp-r9{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(77,166,255,0.2);}
+.resp-ugc{background:var(--pink-dim);color:var(--pink);border:1px solid rgba(255,110,180,0.2);}
+.content-pct{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;}
+.content-pct.done{color:var(--green);}
+.content-pct.mid{color:var(--orange);}
+.content-pct.low{color:var(--muted);}
+.mini-bar{height:3px;background:var(--line);}
+.mini-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .6s ease;}
+.content-tag{background:var(--card2);border:1px solid var(--line2);border-radius:6px;padding:2px 8px;font-size:10px;color:var(--muted);}
+
+/* ADD BAR */
+.add-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.btn-primary{background:var(--accent);color:#0a0a0f;border:none;border-radius:11px;padding:12px 20px;font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:opacity .15s,transform .15s;display:inline-flex;align-items:center;gap:7px;}
+.btn-primary:hover{opacity:.85;transform:scale(1.02);}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--line2);border-radius:11px;padding:11px 18px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:border-color .15s;}
+.btn-secondary:hover{border-color:var(--muted);}
+
+/* ===== DETAIL MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--line2);border-radius:22px;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;animation:popIn .2s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+
+/* Modal header */
+.modal-header{padding:20px 22px 0;flex-shrink:0;}
+.modal-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.modal-title-row{display:flex;align-items:center;gap:10px;}
+.modal-badge{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.modal-name{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;line-height:1.2;}
+.modal-close{background:var(--surface);border:1px solid var(--line2);border-radius:8px;color:var(--muted);width:30px;height:30px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .15s;}
+.modal-close:hover{border-color:var(--red);color:var(--red);}
+
+/* Modal tabs */
+.modal-tabs{display:flex;border-bottom:1px solid var(--line);margin:0 22px;}
+.modal-tab{background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;padding:10px 16px 10px 0;cursor:pointer;position:relative;transition:color .2s;}
+.modal-tab.active{color:var(--accent);}
+.modal-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0;}
+
+/* Modal body */
+.modal-body{flex:1;overflow-y:auto;padding:20px 22px;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-track{background:transparent;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px;}
+.modal-tab-content{display:none;}
+.modal-tab-content.active{display:block;}
+
+/* Modal fields */
+.field-group{margin-bottom:14px;}
+.field-group label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.field-group input[type=text],.field-group input[type=date],.field-group select,.field-group textarea{width:100%;background:var(--surface);border:1px solid var(--line2);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;padding:11px 13px;outline:none;transition:border-color .2s;resize:vertical;}
+.field-group input:focus,.field-group select:focus,.field-group textarea:focus{border-color:var(--accent);}
+.field-group select option{background:var(--card);}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:pointer;}
+
+/* Complexity pick */
+.complexity-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.cp-btn{background:var(--surface);border:1.5px solid var(--line2);border-radius:9px;padding:10px 6px;cursor:pointer;text-align:center;transition:all .15s;}
+.cp-btn .cp-icon{font-size:18px;display:block;margin-bottom:3px;}
+.cp-btn .cp-label{font-size:10px;font-weight:700;color:var(--muted);}
+.cp-btn.active.simple{border-color:var(--green);background:var(--green-dim);}
+.cp-btn.active.simple .cp-label{color:var(--green);}
+.cp-btn.active.medium{border-color:var(--orange);background:var(--orange-dim);}
+.cp-btn.active.medium .cp-label{color:var(--orange);}
+.cp-btn.active.complex{border-color:var(--red);background:var(--red-dim);}
+.cp-btn.active.complex .cp-label{color:var(--red);}
+
+/* Resp pick */
+.resp-pick{display:flex;gap:8px;}
+.rp-btn{flex:1;background:var(--surface);border:1.5px solid var(--line2);border-radius:9px;padding:10px 6px;cursor:pointer;text-align:center;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--muted);transition:all .15s;}
+.rp-btn.active-tier{border-color:var(--accent);background:var(--accent-dim);color:var(--accent);}
+.rp-btn.active-r9{border-color:var(--blue);background:var(--blue-dim);color:var(--blue);}
+.rp-btn.active-ugc{border-color:var(--pink);background:var(--pink-dim);color:var(--pink);}
+
+/* ===== STAGE SLIDERS ===== */
+.stage-slider-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:8px;}
+.stage-slider-item.done-stage{background:var(--accent-dim);border-color:var(--accent-border);}
+.stage-slider-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.stage-slider-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.stage-slider-icon{font-size:14px;}
+.stage-slider-pct{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:900;color:var(--accent);}
+.stage-slider-item.done-stage .stage-slider-pct{color:var(--green);}
+.stage-track{position:relative;height:6px;background:var(--line2);border-radius:3px;cursor:pointer;}
+.stage-track-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .2s;}
+.stage-track input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0;}
+
+/* Binary stage toggle */
+.stage-binary{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.stage-binary:hover{border-color:var(--line2);}
+.stage-binary.done-stage{background:var(--accent-dim);border-color:var(--accent-border);}
+.stage-binary-left{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+.stage-binary-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.stage-binary.done-stage .stage-binary-check{background:var(--accent);border-color:var(--accent);}
+.stage-binary.done-stage .stage-binary-check::after{content:'✓';color:#0a0a0f;font-size:12px;font-weight:900;}
+.stage-binary-note{font-size:10px;color:var(--muted);}
+
+/* Photo upload area */
+.photo-upload-area{border:1.5px dashed var(--line2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:12px;}
+.photo-upload-area:hover{border-color:var(--accent);}
+.photo-upload-area input{display:none;}
+.photo-upload-icon{font-size:28px;margin-bottom:8px;}
+.photo-upload-text{font-size:13px;color:var(--muted);}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.photo-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--surface);}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;}
+.photo-thumb-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border:none;color:white;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+
+/* Modal footer */
+.modal-footer{padding:14px 22px;border-top:1px solid var(--line);flex-shrink:0;display:flex;gap:10px;}
+.btn-cancel{flex:1;background:var(--surface);border:1px solid var(--line2);border-radius:9px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:14px;padding:11px;cursor:pointer;transition:border-color .15s;}
+.btn-cancel:hover{border-color:var(--muted);}
+.btn-save{flex:2;background:var(--accent);border:none;border-radius:9px;color:#0a0a0f;font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;padding:11px;cursor:pointer;letter-spacing:1px;transition:opacity .15s;}
+.btn-save:hover{opacity:.85;}
+.btn-danger{background:var(--red-dim);border:1px solid rgba(255,77,109,0.3);border-radius:9px;color:var(--red);font-family:'Nunito',sans-serif;font-size:13px;padding:11px 16px;cursor:pointer;transition:all .15s;}
+.btn-danger:hover{background:rgba(255,77,109,0.2);}
+
+/* Tag input */
+.tag-input-wrap{display:flex;gap:7px;flex-wrap:wrap;padding:9px;background:var(--surface);border:1px solid var(--line2);border-radius:9px;min-height:42px;cursor:text;}
+.tag{background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);border-radius:5px;padding:2px 7px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:3px;}
+.tag-x{cursor:pointer;opacity:.6;font-size:13px;}
+.tag-x:hover{opacity:1;}
+.tag-input{background:none;border:none;outline:none;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;flex:1;min-width:80px;}
+
+/* Shooting */
+.shoot-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s;}
+.shoot-card:hover{border-color:var(--line2);}
+.shoot-icon{width:34px;height:34px;border-radius:9px;background:var(--pink-dim);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.shoot-info{flex:1;}
+.shoot-date{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.shoot-name{font-size:14px;font-weight:700;margin-bottom:5px;}
+.shoot-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.shoot-tag{background:var(--pink-dim);color:var(--pink);border:1px solid rgba(255,110,180,0.2);border-radius:5px;padding:2px 7px;font-size:10px;font-weight:600;}
+.shoot-del{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;transition:color .15s;}
+.shoot-del:hover{color:var(--red);}
+
+/* Ideas */
+.idea-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;display:flex;gap:12px;cursor:pointer;transition:border-color .15s;}
+.idea-card:hover{border-color:var(--line2);}
+.idea-icon{width:34px;height:34px;border-radius:9px;background:var(--orange-dim);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px;}
+.idea-info{flex:1;}
+.idea-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.idea-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.idea-status{border-radius:6px;padding:3px 9px;font-size:10px;font-weight:700;margin-top:7px;display:inline-block;}
+.idea-status.dev{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(255,107,53,0.2);}
+.idea-status.approved{background:var(--green-dim);color:var(--green);border:1px solid rgba(62,207,142,0.2);}
+.idea-status.rejected{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,109,0.2);}
+.idea-del{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;transition:color .15s;flex-shrink:0;}
+.idea-del:hover{color:var(--red);}
+
+/* Asaichi */
+.asaichi-today-card{background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,107,53,0.05));border:1px solid rgba(255,107,53,0.25);border-radius:20px;padding:24px;margin-bottom:20px;}
+.asaichi-label{font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:12px;}
+.asaichi-big{font-family:'Unbounded',sans-serif;font-size:clamp(48px,10vw,72px);font-weight:900;line-height:1;color:var(--text);}
+.asaichi-big span{color:var(--orange);}
+.asaichi-sub{font-size:13px;color:var(--muted);margin-top:8px;}
+.fish-row{display:flex;align-items:center;gap:16px;margin-top:16px;}
+.fish-img{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(255,107,53,0.3));}
+.fish-phrase{font-size:14px;font-weight:600;color:var(--text);line-height:1.5;}
+.fish-phrase em{color:var(--muted);font-size:12px;font-style:normal;display:block;margin-top:4px;}
+
+/* Today note */
+.today-note-wrap{background:var(--surface);border:1px solid var(--line2);border-radius:12px;padding:14px;margin-top:16px;}
+.today-note-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.today-note-input{width:100%;background:none;border:none;outline:none;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;line-height:1.7;resize:none;min-height:60px;}
+.today-note-input::placeholder{color:var(--muted);}
+.today-note-actions{display:flex;gap:8px;margin-top:10px;}
+.btn-ai{background:linear-gradient(135deg,rgba(200,255,0,0.15),rgba(200,255,0,0.05));border:1px solid var(--accent-border);border-radius:8px;color:var(--accent);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.btn-ai:hover{background:rgba(200,255,0,0.2);}
+.btn-ai.loading{opacity:.6;pointer-events:none;}
+.ai-result{margin-top:12px;padding:12px;background:var(--card2);border-radius:10px;font-size:13px;line-height:1.7;color:var(--text);display:none;}
+.ai-result.show{display:block;}
+
+/* Fish grid */
+.fish-grid-section{margin-bottom:20px;}
+.fish-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;}
+.fish-cell{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px 4px;text-align:center;cursor:pointer;transition:all .15s;}
+.fish-cell:hover{border-color:var(--line2);}
+.fish-cell.today{border-color:var(--orange);background:rgba(255,107,53,0.08);}
+.fish-cell.logged{border-color:var(--accent-border);background:var(--accent-dim);}
+.fish-cell.logged.karass{border-color:rgba(155,127,232,0.3);background:var(--purple-dim);}
+.fish-cell.logged.krop{border-color:var(--accent-border);background:var(--accent-dim);}
+.fish-cell.logged.sword{border-color:rgba(255,107,53,0.3);background:var(--orange-dim);}
+.fish-day-num{font-family:'Unbounded',sans-serif;font-size:8px;font-weight:700;color:var(--muted);}
+.fish-cell.today .fish-day-num{color:var(--orange);}
+.fish-cell.logged .fish-day-num{color:var(--text);}
+.fish-pct-small{font-size:8px;color:var(--muted);margin-top:1px;}
+.fish-emoji-small{font-size:12px;margin-top:2px;}
+
+/* Asaichi tier list */
+.asaichi-content-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.aci-badge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.aci-info{flex:1;min-width:0;}
+.aci-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.aci-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.aci-pct{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;}
+
+/* Report */
+.report-box{background:var(--surface);border:1px solid var(--line2);border-radius:12px;padding:16px;margin-top:14px;font-size:12px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:monospace;display:none;}
+
+/* Loading */
+.loading{text-align:center;padding:50px 20px;color:var(--muted);}
+.loading-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin:0 3px;animation:bounce 1.2s infinite;}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-7px);opacity:1}}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;}
+.empty .big{font-size:36px;margin-bottom:10px;}
+
+/* Simple modal for add forms */
+.simple-modal{background:var(--card);border:1px solid var(--line2);border-radius:22px;padding:26px;width:100%;max-width:480px;animation:popIn .2s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto;}
+.simple-modal-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;margin-top:16px;}
+
+@media(max-width:650px){
+  .overview-grid{grid-template-columns:1fr 1fr;}
+  .sliders-grid{grid-template-columns:1fr 1fr;}
+  .fish-grid{grid-template-columns:repeat(5,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="orb1"></div><div class="orb2"></div>
+
+<nav class="tabs-bar">
+  <div class="tabs-logo">TIER ✦</div>
+  <button class="tab-btn active" onclick="switchTab('dashboard',this)">Дашборд</button>
+  <button class="tab-btn" onclick="switchTab('calendar',this)">Календар</button>
+  <button class="tab-btn" onclick="switchTab('reels',this)">Рілзи</button>
+  <button class="tab-btn" onclick="switchTab('photo',this)">Фото</button>
+  <button class="tab-btn" onclick="switchTab('design',this)">Дизайн</button>
+  <button class="tab-btn" onclick="switchTab('shooting',this)">Зйомки</button>
+  <button class="tab-btn" onclick="switchTab('ideas',this)">Ідеї</button>
+  <button class="tab-btn asaichi" onclick="switchTab('asaichi',this)">Asaichi</button>
+  <div class="sync-badge"><span class="sync-dot"></span>LIVE</div>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div class="page-eyebrow">контент департамент</div>
+    <div class="page-title">Дашборд <span>✦</span></div>
+  </div>
+  <div class="overview-grid">
+    <div class="ov-card lime"><div class="ov-val" id="ovTotal">0%</div><div class="ov-label">Загальний прогрес</div></div>
+    <div class="ov-card orange"><div class="ov-val" id="ovReels">0/0</div><div class="ov-label">Рілзів готово</div></div>
+    <div class="ov-card purple"><div class="ov-val" id="ovPhoto">0/0</div><div class="ov-label">Фото готово</div></div>
+    <div class="ov-card blue"><div class="ov-val" id="ovDesign">0/0</div><div class="ov-label">Дизайн готово</div></div>
+  </div>
+  <div class="warnings-wrap" id="warningsWrap"></div>
+  <div class="month-settings">
+    <div class="section-title">📅 План на місяць</div>
+    <div class="sliders-grid">
+      <div class="slider-group"><label>Рілзів <span class="slider-val" id="reelsValDisp">12</span></label><input type="range" id="reelsSlider" min="0" max="15" value="12" oninput="onSlider()"></div>
+      <div class="slider-group"><label>Фото-тематик <span class="slider-val" id="photoValDisp">4</span></label><input type="range" id="photoSlider" min="0" max="15" value="4" oninput="onSlider()"></div>
+      <div class="slider-group"><label>Дизайн <span class="slider-val" id="designValDisp">6</span></label><input type="range" id="designSlider" min="0" max="15" value="6" oninput="onSlider()"></div>
+      <div class="slider-group"><label>Робочих днів <span class="slider-val" id="daysValDisp">20</span></label><input type="range" id="daysSlider" min="10" max="30" value="20" oninput="onSlider()"></div>
+    </div>
+  </div>
+  <div class="section-title" style="margin-bottom:12px">🔥 В роботі</div>
+  <div id="inProgressList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+  <div style="margin-top:20px">
+    <button class="btn-secondary" onclick="generateReport()">📊 Місячний звіт</button>
+    <div class="report-box" id="reportBox"></div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="page" id="page-calendar">
+  <div class="page-header">
+    <div class="page-eyebrow">всі 7 днів тижня</div>
+    <div class="page-title">Кален<span>дар</span></div>
+  </div>
+  <div class="calendar-wrap">
+    <div class="cal-nav">
+      <button class="cal-arrow" onclick="calPrev()">‹</button>
+      <div class="cal-month" id="calMonthLabel"></div>
+      <button class="cal-arrow" onclick="calNext()">›</button>
+    </div>
+    <div class="cal-weekdays">
+      <div class="cal-wd">ПН</div><div class="cal-wd">ВТ</div><div class="cal-wd">СР</div><div class="cal-wd">ЧТ</div><div class="cal-wd">ПТ</div><div class="cal-wd weekend">СБ</div><div class="cal-wd weekend">НД</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+</div>
+
+<!-- REELS -->
+<div class="page" id="page-reels">
+  <div class="page-header"><div class="page-eyebrow">відео контент</div><div class="page-title">Рілзи</div></div>
+  <div class="add-bar"><button class="btn-primary" onclick="openAddModal('reels')">+ Додати рілз</button></div>
+  <div class="content-list" id="reelsList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+</div>
+
+<!-- PHOTO -->
+<div class="page" id="page-photo">
+  <div class="page-header"><div class="page-eyebrow">фото контент</div><div class="page-title">Фото</div></div>
+  <div class="add-bar"><button class="btn-primary" onclick="openAddModal('photos')">+ Додати тематику</button></div>
+  <div class="content-list" id="photoList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+</div>
+
+<!-- DESIGN -->
+<div class="page" id="page-design">
+  <div class="page-header"><div class="page-eyebrow">фігма / графіка</div><div class="page-title">Дизайн</div></div>
+  <div class="add-bar"><button class="btn-primary" onclick="openAddModal('designs')">+ Додати дизайн</button></div>
+  <div class="content-list" id="designList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+</div>
+
+<!-- SHOOTING -->
+<div class="page" id="page-shooting">
+  <div class="page-header"><div class="page-eyebrow">знімальні дні</div><div class="page-title">Зйомки</div></div>
+  <div class="add-bar"><button class="btn-primary" onclick="openShootAdd()">+ Знімальний день</button></div>
+  <div id="shootingList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+</div>
+
+<!-- IDEAS -->
+<div class="page" id="page-ideas">
+  <div class="page-header"><div class="page-eyebrow">пропозиції</div><div class="page-title">Ідеї</div></div>
+  <div class="add-bar"><button class="btn-primary" onclick="openIdeaAdd()">+ Нова ідея</button></div>
+  <div id="ideasList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+</div>
+
+<!-- ASAICHI -->
+<div class="page" id="page-asaichi">
+  <div class="page-header"><div class="page-eyebrow">мій особистий звіт</div><div class="page-title">Asai<span>chi</span></div></div>
+
+  <!-- TODAY CARD -->
+  <div class="asaichi-today-card">
+    <div class="asaichi-label" id="asaichiDayLabel">⛩ сьогодні</div>
+    <div class="asaichi-big"><span id="asaichiPct">0</span>%</div>
+    <div class="asaichi-sub" id="asaichiSub">завантаження...</div>
+    <div class="fish-row">
+      <img class="fish-img" id="asaichiFishImg" src="" alt="" style="display:none">
+      <div>
+        <div class="fish-phrase" id="asaichiFishPhrase"></div>
+      </div>
+    </div>
+    <div class="today-note-wrap">
+      <div class="today-note-label">📝 Що зробила сьогодні</div>
+      <textarea class="today-note-input" id="todayNote" rows="3" placeholder="Опиши своїми словами що робила сьогодні..."></textarea>
+      <div class="today-note-actions">
+        <button class="btn-ai" id="btnAiEval" onclick="runAiEval()">✨ Оцінити продуктивність</button>
+        <button class="btn-secondary" style="font-size:12px;padding:7px 14px" onclick="saveTodayNote()">Зберегти</button>
+      </div>
+      <div class="ai-result" id="aiResult"></div>
+    </div>
+  </div>
+
+  <!-- FISH GRID -->
+  <div class="section-title" style="margin-bottom:12px">🐟 Щоденний прогрес</div>
+  <div class="fish-grid-section">
+    <div class="fish-grid" id="fishGrid"></div>
+  </div>
+
+  <div class="section-title" style="margin-bottom:12px;margin-top:4px">📋 Мій контент (Tier)</div>
+  <div id="asaichiList"></div>
+</div>
+
+<!-- ===== DETAIL MODAL (content cards) ===== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-topbar">
+        <div class="modal-title-row">
+          <div class="modal-badge" id="detailBadge"></div>
+          <div class="modal-name" id="detailName"></div>
+        </div>
+        <button class="modal-close" onclick="closeModals()">×</button>
+      </div>
+      <div class="modal-tabs">
+        <button class="modal-tab active" onclick="switchModalTab('info',this)">📋 Інфо</button>
+        <button class="modal-tab" onclick="switchModalTab('stages',this)">⚙️ Етапи</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <!-- INFO TAB -->
+      <div class="modal-tab-content active" id="mtab-info">
+        <div class="field-group"><label>Назва</label><input type="text" id="dName"></div>
+        <div class="field-group" id="dComplexityWrap"><label>Складність</label>
+          <div class="complexity-pick" id="dCpPick">
+            <div class="cp-btn simple" onclick="pickDComplexity('simple',this)"><span class="cp-icon">🟢</span><span class="cp-label">Простий</span></div>
+            <div class="cp-btn medium" onclick="pickDComplexity('medium',this)"><span class="cp-icon">🟡</span><span class="cp-label">Середній</span></div>
+            <div class="cp-btn complex" onclick="pickDComplexity('complex',this)"><span class="cp-icon">🔴</span><span class="cp-label">Складний</span></div>
+          </div>
+        </div>
+        <div class="field-group"><label>Відповідальний</label>
+          <div class="resp-pick" id="dRespPick">
+            <button class="rp-btn" onclick="pickDResp('tier',this)">🟢 tier</button>
+            <button class="rp-btn" onclick="pickDResp('r9',this)">🔵 r9</button>
+            <button class="rp-btn" onclick="pickDResp('ugc',this)">🩷 ugc</button>
+          </div>
+        </div>
+        <div class="field-group"><label>Дедлайн</label><input type="date" id="dDeadline"></div>
+        <div class="field-group"><label>Нотатки (ідея, моделі, референси, дата зйомки...)</label><textarea id="dNotes" rows="5" placeholder="Опиши ідею вільно..."></textarea></div>
+        <div class="field-group">
+          <label>Фото (лише для перегляду)</label>
+          <div class="photo-grid" id="dPhotoGrid"></div>
+          <div class="photo-upload-area" onclick="document.getElementById('dPhotoInput').click()">
+            <input type="file" id="dPhotoInput" accept="image/*" multiple onchange="handlePhotoUpload(event)">
+            <div class="photo-upload-icon">🖼</div>
+            <div class="photo-upload-text">Клікни щоб додати фото</div>
+          </div>
+        </div>
+        <div class="field-group"><label>Теги</label>
+          <div class="tag-input-wrap" id="dTagWrap" onclick="document.getElementById('dTagInput').focus()">
+            <input class="tag-input" id="dTagInput" placeholder="#тег..." onkeydown="handleDTag(event)">
+          </div>
+        </div>
+      </div>
+      <!-- STAGES TAB -->
+      <div class="modal-tab-content" id="mtab-stages">
+        <div id="stagesContent"></div>
+        <div style="margin-top:14px;padding:12px;background:var(--surface);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
+          💡 Повзунки: пре-продакшн, риба, саунд, колір<br>
+          Бінарні: зйомка (не впливає на %), постинг (1%)
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-danger" onclick="deleteCurrentItem()">🗑</button>
+      <button class="btn-cancel" onclick="closeModals()">Скасувати</button>
+      <button class="btn-save" onclick="saveDetail()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="simple-modal">
+    <div class="simple-modal-title" id="addModalTitle">Новий контент</div>
+    <div class="field-group"><label>Назва</label><input type="text" id="aName" placeholder="Назва..."></div>
+    <div class="field-group" id="aComplexityWrap"><label>Складність</label>
+      <div class="complexity-pick" id="aCpPick">
+        <div class="cp-btn simple active" onclick="pickAComplexity('simple',this)"><span class="cp-icon">🟢</span><span class="cp-label">Простий</span></div>
+        <div class="cp-btn medium" onclick="pickAComplexity('medium',this)"><span class="cp-icon">🟡</span><span class="cp-label">Середній</span></div>
+        <div class="cp-btn complex" onclick="pickAComplexity('complex',this)"><span class="cp-icon">🔴</span><span class="cp-label">Складний</span></div>
+      </div>
+    </div>
+    <div class="field-group"><label>Відповідальний</label>
+      <div class="resp-pick" id="aRespPick">
+        <button class="rp-btn active-tier" onclick="pickAResp('tier',this)">🟢 tier</button>
+        <button class="rp-btn" onclick="pickAResp('r9',this)">🔵 r9</button>
+        <button class="rp-btn" onclick="pickAResp('ugc',this)">🩷 ugc</button>
+      </div>
+    </div>
+    <div class="field-group"><label>Дедлайн</label><input type="date" id="aDeadline"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Скасувати</button>
+      <button class="btn-save" onclick="saveAdd()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- CAL ADD MODAL -->
+<div class="modal-overlay" id="calAddModal">
+  <div class="simple-modal">
+    <div class="simple-modal-title" id="calAddTitle">📅 Додати на день</div>
+    <div class="field-group"><label>Тип</label>
+      <select id="calAddType" onchange="onCalTypeChange()">
+        <option value="reels">🎬 Рілз</option>
+        <option value="photos">📸 Фото-тематика</option>
+        <option value="designs">🎨 Дизайн</option>
+        <option value="shoots">🎥 Зйомка</option>
+      </select>
+    </div>
+    <div class="field-group"><label>Назва</label><input type="text" id="calAddName" placeholder="Назва..."></div>
+    <div class="field-group" id="calComplexityField"><label>Складність</label>
+      <div class="complexity-pick" id="calCpPick">
+        <div class="cp-btn simple active" onclick="pickCalComplexity('simple',this)"><span class="cp-icon">🟢</span><span class="cp-label">Простий</span></div>
+        <div class="cp-btn medium" onclick="pickCalComplexity('medium',this)"><span class="cp-icon">🟡</span><span class="cp-label">Середній</span></div>
+        <div class="cp-btn complex" onclick="pickCalComplexity('complex',this)"><span class="cp-icon">🔴</span><span class="cp-label">Складний</span></div>
+      </div>
+    </div>
+    <div class="field-group" id="calRespField"><label>Відповідальний</label>
+      <div class="resp-pick" id="calRespPick">
+        <button class="rp-btn active-tier" onclick="pickCalResp('tier',this)">🟢 tier</button>
+        <button class="rp-btn" onclick="pickCalResp('r9',this)">🔵 r9</button>
+        <button class="rp-btn" onclick="pickCalResp('ugc',this)">🩷 ugc</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Скасувати</button>
+      <button class="btn-save" onclick="saveCalAdd()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHOOT ADD MODAL -->
+<div class="modal-overlay" id="shootAddModal">
+  <div class="simple-modal">
+    <div class="simple-modal-title">🎥 Знімальний день</div>
+    <div class="field-group"><label>Опис / локація</label><input type="text" id="shootName" placeholder="Студія, локація..."></div>
+    <div class="field-group"><label>Дата</label><input type="date" id="shootDate"></div>
+    <div class="field-group"><label>Які відео/фото знімали (Enter)</label>
+      <div class="tag-input-wrap" id="shootTagWrap" onclick="document.getElementById('shootTagInput').focus()">
+        <input class="tag-input" id="shootTagInput" placeholder="Назва відео..." onkeydown="handleShootTag(event)">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Скасувати</button>
+      <button class="btn-save" onclick="saveShoot()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA ADD MODAL -->
+<div class="modal-overlay" id="ideaAddModal">
+  <div class="simple-modal">
+    <div class="simple-modal-title">💡 Нова ідея</div>
+    <div class="field-group"><label>Назва</label><input type="text" id="ideaTitleInput" placeholder="Назва ідеї..."></div>
+    <div class="field-group"><label>Опис</label><textarea id="ideaDescInput" rows="3" placeholder="Деталі..."></textarea></div>
+    <div class="field-group"><label>Статус</label>
+      <select id="ideaStatusInput">
+        <option value="dev">🔄 В розробці</option>
+        <option value="approved">✅ Затверджено</option>
+        <option value="rejected">❌ Відхилено</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Фото (лише для перегляду)</label>
+      <div class="photo-grid" id="ideaPhotoGrid"></div>
+      <div class="photo-upload-area" onclick="document.getElementById('ideaPhotoInput').click()">
+        <input type="file" id="ideaPhotoInput" accept="image/*" multiple onchange="handleIdeaPhotoUpload(event)">
+        <div class="photo-upload-icon">🖼</div>
+        <div class="photo-upload-text">Клікни щоб додати фото</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Скасувати</button>
+      <button class="btn-save" onclick="saveIdeaAdd()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- FISH DAY MODAL -->
+<div class="modal-overlay" id="fishDayModal">
+  <div class="simple-modal">
+    <div class="simple-modal-title" id="fishDayTitle">День —</div>
+    <div id="fishDayContent" style="font-size:14px;line-height:1.8;color:var(--muted);"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn-cancel" onclick="closeModals()">Закрити</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyCu-ZXXh5Vs-f_-nMImghj_e12_NsD9AzE",
+  authDomain:"tier-content-department.firebaseapp.com",
+  databaseURL:"https://tier-content-department-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"tier-content-department",
+  storageBucket:"tier-content-department.firebasestorage.app",
+  messagingSenderId:"207042594016",
+  appId:"1:207042594016:web:ff7e9bddf6de3f8479bc85"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ===== STAGES CONFIG =====
+// slider stages: weight in % (out of 99 total, postinG=1%)
+const SLIDER_STAGES = {
+  simple: [
+    {id:'draft', name:'Риба + чернетка', icon:'🐟', weight:40},
+    {id:'color', name:'Колір',            icon:'🎨', weight:59},
+  ],
+  medium: [
+    {id:'prep',  name:'Пре-продакшн',    icon:'📋', weight:20},
+    {id:'draft', name:'Риба + чернетка', icon:'🐟', weight:30},
+    {id:'color', name:'Колір',            icon:'🎨', weight:49},
+  ],
+  complex: [
+    {id:'prep',  name:'Пре-продакшн',    icon:'📋', weight:15},
+    {id:'draft', name:'Риба + чернетка', icon:'🐟', weight:25},
+    {id:'sound', name:'Саунд дизайн',    icon:'🎵', weight:20},
+    {id:'color', name:'Колір',            icon:'🎨', weight:39},
+  ],
+};
+const BINARY_STAGES_REEL = {
+  simple:  [{id:'post', name:'Постинг', icon:'📤', isPost:true}],
+  medium:  [{id:'shoot', name:'Зйомка', icon:'🎬', isPost:false}, {id:'post', name:'Постинг', icon:'📤', isPost:true}],
+  complex: [{id:'shoot', name:'Зйомка', icon:'🎬', isPost:false}, {id:'post', name:'Постинг', icon:'📤', isPost:true}],
+};
+const PHOTO_STAGES = [
+  {id:'shoot', name:'Зйомка',   icon:'📷', type:'binary', isPost:false},
+  {id:'edit',  name:'Обробка',  icon:'🎨', type:'slider', weight:70},
+  {id:'done',  name:'Передано', icon:'✅', type:'binary', isPost:true},
+];
+const DESIGN_STAGES = [
+  {id:'brief', name:'Бриф / ТЗ',         icon:'📋', type:'slider', weight:20},
+  {id:'draft', name:'Чернетка у Фігмі',  icon:'🎨', type:'slider', weight:50},
+  {id:'fixes', name:'Правки',             icon:'✏️', type:'slider', weight:29},
+  {id:'done',  name:'Затверджено',        icon:'✅', type:'binary', isPost:true},
+];
+const COMPLEXITY_LABEL = {simple:'Простий', medium:'Середній', complex:'Складний'};
+const COMPLEXITY_ICON  = {simple:'🟢', medium:'🟡', complex:'🔴'};
+
+// FISH CONFIG — using base64 placeholders until real images provided
+// Images: karass=карась(orange border), skumbria=скумбрія, shark=акула-іграшка
+const FISH_DATA = {
+  karass: {
+    src: '/mnt/user-data/uploads/Untitled-1.png',
+    threshold: 'below',   // < dailyTarget
+    phrases: [
+      "таке чуство, шо бог десь наказує нас за шось",
+      "ну... буває. завтра краще",
+      "карась теж риба. майже.",
+      "сьогодні відпочиваємо. душею.",
+    ]
+  },
+  skumbria: {
+    src: '/mnt/user-data/uploads/1776937734416_image_2026-04-23_10-29-25.png',
+    threshold: 'equal',   // = dailyTarget
+    phrases: [
+      "ааай молодець!",
+      "чітко по плану. шановаємо.",
+      "стабільність — теж талант",
+      "рівно 5%. ні більше ні менше. майстер.",
+    ]
+  },
+  shark: {
+    src: '/mnt/user-data/uploads/1776937743547_image_2026-04-23_10-59-50.png',
+    threshold: 'above',   // > dailyTarget
+    phrases: [
+      "астанавітєсь\n*не астанавлюйся",
+      "хто дав дозвіл бути такою продуктивною??",
+      "плану мало — бери більше рілзів",
+      "акула не спить. і ти теж.",
+    ]
+  }
+};
+
+function getFishForPct(gainPct, dailyTarget) {
+  if (gainPct < dailyTarget) return 'karass';
+  if (gainPct === dailyTarget) return 'skumbria';
+  return 'shark';
+}
+
+function randomPhrase(fishKey) {
+  const phrases = FISH_DATA[fishKey].phrases;
+  return phrases[Math.floor(Math.random() * phrases.length)];
+}
+
+// STATE
+let reels={}, photos={}, designs={}, shoots={}, ideas={}, settings={reelsTarget:12,photoTarget:4,designTarget:6,workDays:20};
+let dayLogs={};  // {dateStr: {note, gainPct, fish}}
+let calYear, calMonth;
+let addCollection = 'reels';
+let addComplexity = 'simple';
+let addResp = 'tier';
+let calComplexity = 'simple';
+let calResp = 'tier';
+let calTargetDate = null;
+let calAddType = 'reels';
+let detailId = null;
+let detailCollection = null;
+let detailComplexity = 'simple';
+let detailResp = 'tier';
+let detailTags = [];
+let detailPhotos = [];
+let shootTags = [];
+let ideaPhotos = [];
+let currentModalTabId = 'info';
+
+const now = new Date();
+calYear = now.getFullYear();
+calMonth = now.getMonth();
+
+// FIREBASE
+onValue(ref(db,'reels'), s=>{reels=s.val()||{};renderAll();});
+onValue(ref(db,'photos'), s=>{photos=s.val()||{};renderAll();});
+onValue(ref(db,'designs'), s=>{designs=s.val()||{};renderAll();});
+onValue(ref(db,'shoots'), s=>{shoots=s.val()||{};renderShooting();renderCalendar();});
+onValue(ref(db,'ideas'), s=>{ideas=s.val()||{};renderIdeas();});
+onValue(ref(db,'dayLogs'), s=>{dayLogs=s.val()||{};renderAsaichi();});
+onValue(ref(db,'settings'), s=>{
+  if(s.val()){
+    settings={...settings,...s.val()};
+    document.getElementById('reelsSlider').value=settings.reelsTarget||12;
+    document.getElementById('photoSlider').value=settings.photoTarget||4;
+    document.getElementById('designSlider').value=settings.designTarget||6;
+    document.getElementById('daysSlider').value=settings.workDays||20;
+    ['reels','photo','design','days'].forEach(k=>{
+      const map={reels:'reelsTarget',photo:'photoTarget',design:'designTarget',days:'workDays'};
+      document.getElementById(k+'ValDisp').textContent=settings[map[k]]||0;
+    });
+  }
+});
+
+function renderAll(){renderDashboard();renderContentList('reels');renderContentList('photos');renderContentList('designs');renderCalendar();renderAsaichi();}
+
+// ===== PCT CALC =====
+function reelPct(reel){
+  const complexity = reel.complexity||'simple';
+  const sliders = SLIDER_STAGES[complexity]||SLIDER_STAGES.simple;
+  const binaries = BINARY_STAGES_REEL[complexity]||[];
+  let total = 0;
+  // sliders contribute their weight * their value/100
+  sliders.forEach(s=>{
+    const val = (reel.stages&&reel.stages[s.id])||0;
+    total += s.weight * (val/100);
+  });
+  // postinG = 1%
+  binaries.forEach(b=>{
+    if(b.isPost && reel.stages&&reel.stages[b.id]) total += 1;
+  });
+  return Math.min(100, Math.round(total));
+}
+
+function photoPct(photo){
+  let total = 0;
+  PHOTO_STAGES.forEach(s=>{
+    if(s.type==='slider'){
+      const val=(photo.stages&&photo.stages[s.id])||0;
+      total += s.weight*(val/100);
+    } else if(s.isPost && photo.stages&&photo.stages[s.id]){
+      total += 1;
+    }
+  });
+  return Math.min(100,Math.round(total));
+}
+
+function designPct(design){
+  let total = 0;
+  DESIGN_STAGES.forEach(s=>{
+    if(s.type==='slider'){
+      const val=(design.stages&&design.stages[s.id])||0;
+      total += s.weight*(val/100);
+    } else if(s.isPost && design.stages&&design.stages[s.id]){
+      total += 1;
+    }
+  });
+  return Math.min(100,Math.round(total));
+}
+
+function itemPct(item, collection){
+  if(collection==='reels') return reelPct(item);
+  if(collection==='photos') return photoPct(item);
+  return designPct(item);
+}
+
+function totalPct(){
+  const allR=Object.values(reels), allP=Object.values(photos), allD=Object.values(designs);
+  const all=[...allR.map(r=>reelPct(r)),...allP.map(p=>photoPct(p)),...allD.map(d=>designPct(d))];
+  if(!all.length) return 0;
+  return Math.round(all.reduce((a,b)=>a+b,0)/all.length);
+}
+
+function tierPct(){
+  const tr=Object.values(reels).filter(r=>!r.responsible||r.responsible==='tier');
+  const tp=Object.values(photos).filter(p=>!p.responsible||p.responsible==='tier');
+  const td=Object.values(designs).filter(d=>d.responsible==='tier');
+  const all=[...tr.map(r=>reelPct(r)),...tp.map(p=>photoPct(p)),...td.map(d=>designPct(d))];
+  if(!all.length) return 0;
+  return Math.round(all.reduce((a,b)=>a+b,0)/all.length);
+}
+
+// ===== DASHBOARD =====
+function renderDashboard(){
+  const allR=Object.values(reels),allP=Object.values(photos),allD=Object.values(designs);
+  document.getElementById('ovTotal').textContent=totalPct()+'%';
+  document.getElementById('ovReels').textContent=allR.filter(r=>reelPct(r)===100).length+'/'+settings.reelsTarget;
+  document.getElementById('ovPhoto').textContent=allP.filter(p=>photoPct(p)===100).length+'/'+settings.photoTarget;
+  document.getElementById('ovDesign').textContent=allD.filter(d=>designPct(d)===100).length+'/'+settings.designTarget;
+  renderWarnings(); renderInProgress();
+}
+
+function renderWarnings(){
+  const wrap=document.getElementById('warningsWrap');
+  const today=new Date();today.setHours(0,0,0,0);
+  const warns=[];
+  const check=(item,col)=>{
+    if(!item.deadline)return;
+    const dl=new Date(item.deadline+'T00:00:00');
+    const diff=Math.ceil((dl-today)/86400000);
+    const pct=itemPct(item,col);
+    if(diff<=2&&diff>=0&&pct<70) warns.push({name:item.name,diff,pct});
+  };
+  Object.values(reels).forEach(r=>check(r,'reels'));
+  Object.values(photos).forEach(p=>check(p,'photos'));
+  Object.values(designs).forEach(d=>check(d,'designs'));
+  wrap.innerHTML=warns.map(w=>`<div class="warning-item"><span>⚠️</span><div class="wi-text"><b>${w.name}</b> — ${w.pct}% готово</div><div class="wi-days">${w.diff===0?'сьогодні':w.diff===1?'завтра':w.diff+' дн'}</div></div>`).join('');
+}
+
+function renderInProgress(){
+  const all=[
+    ...Object.entries(reels).map(([id,r])=>({id,col:'reels',...r,_pct:reelPct(r)})),
+    ...Object.entries(photos).map(([id,p])=>({id,col:'photos',...p,_pct:photoPct(p)})),
+    ...Object.entries(designs).map(([id,d])=>({id,col:'designs',...d,_pct:designPct(d)})),
+  ].filter(x=>x._pct>0&&x._pct<100).sort((a,b)=>b._pct-a._pct);
+  const el=document.getElementById('inProgressList');
+  if(!all.length){el.innerHTML='<div class="empty"><div class="big">✨</div>Все або не розпочато, або завершено</div>';return;}
+  el.innerHTML=all.map(item=>{
+    const icon=item.col==='photos'?'📸':item.col==='designs'?'🎨':(COMPLEXITY_ICON[item.complexity]||'🎬');
+    const cls=item.col==='photos'?'photo':item.col==='designs'?'design':(item.complexity||'simple');
+    const pc=item._pct>=70?'done':item._pct>=30?'mid':'low';
+    return `<div class="content-card-row" onclick="openDetail('${item.col}','${item.id}')">
+      <div class="content-card-head">
+        <div class="complexity-badge ${cls}">${icon}</div>
+        <div class="content-info">
+          <div class="content-name">${item.name}</div>
+          <div class="content-meta">${item.deadline?`<span>📅 ${fmtDate(item.deadline)}</span>`:''}<span class="resp-badge resp-${item.responsible||'tier'}">${item.responsible||'tier'}</span></div>
+        </div>
+        <div class="content-pct ${pc}">${item._pct}%</div>
+      </div>
+      <div class="mini-bar"><div class="mini-bar-fill" style="width:${item._pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ===== CONTENT LIST =====
+function renderContentList(collection){
+  const data=collection==='reels'?reels:collection==='photos'?photos:designs;
+  const elId=collection==='reels'?'reelsList':collection==='photos'?'photoList':'designList';
+  const el=document.getElementById(elId);
+  const list=Object.entries(data);
+  if(!list.length){
+    const e={reels:'🎬',photos:'📸',designs:'🎨'};
+    const n={reels:'рілзів',photos:'фото-тематик',designs:'дизайнів'};
+    el.innerHTML=`<div class="empty"><div class="big">${e[collection]}</div>${n[collection]} ще немає</div>`;
+    return;
+  }
+  el.innerHTML=list.map(([id,item])=>{
+    const pct=itemPct(item,collection);
+    const pc=pct>=100?'done':pct>=30?'mid':'low';
+    const icon=collection==='photos'?'📸':collection==='designs'?'🎨':(COMPLEXITY_ICON[item.complexity]||'🎬');
+    const cls=collection==='photos'?'photo':collection==='designs'?'design':(item.complexity||'simple');
+    const resp=item.responsible||'tier';
+    return `<div class="content-card-row" onclick="openDetail('${collection}','${id}')">
+      <div class="content-card-head">
+        <div class="complexity-badge ${cls}">${icon}</div>
+        <div class="content-info">
+          <div class="content-name">${item.name}</div>
+          <div class="content-meta">
+            ${collection==='reels'?`<span>${COMPLEXITY_LABEL[item.complexity]||''}</span>`:''}
+            ${item.deadline?`<span>📅 ${fmtDate(item.deadline)}</span>`:''}
+            <span class="resp-badge resp-${resp}">${resp}</span>
+            <span>${pct}%</span>
+          </div>
+        </div>
+        <div class="content-pct ${pc}">${pct}%</div>
+      </div>
+      <div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ===== DETAIL MODAL =====
+window.openDetail = function(collection, id) {
+  const data=collection==='reels'?reels:collection==='photos'?photos:designs;
+  const item=data[id]; if(!item)return;
+  detailId=id; detailCollection=collection;
+  detailComplexity=item.complexity||'simple';
+  detailResp=item.responsible||'tier';
+  detailTags=[...(item.tags||[])];
+  detailPhotos=[...(item.photos||[])];
+
+  const icon=collection==='photos'?'📸':collection==='designs'?'🎨':(COMPLEXITY_ICON[item.complexity]||'🎬');
+  const cls=collection==='photos'?'photo':collection==='designs'?'design':(item.complexity||'simple');
+  document.getElementById('detailBadge').className=`modal-badge ${cls}`;
+  document.getElementById('detailBadge').textContent=icon;
+  document.getElementById('detailName').textContent=item.name;
+  document.getElementById('dName').value=item.name||'';
+  document.getElementById('dDeadline').value=item.deadline||'';
+  document.getElementById('dNotes').value=item.notes||'';
+
+  // complexity
+  const cWrap=document.getElementById('dComplexityWrap');
+  cWrap.style.display=collection==='reels'?'block':'none';
+  document.querySelectorAll('#dCpPick .cp-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`#dCpPick .cp-btn.${detailComplexity}`)?.classList.add('active');
+
+  // resp
+  document.querySelectorAll('#dRespPick .rp-btn').forEach(b=>b.className='rp-btn');
+  const ri=['tier','r9','ugc'].indexOf(detailResp);
+  if(ri>=0) document.querySelectorAll('#dRespPick .rp-btn')[ri].className=`rp-btn active-${detailResp}`;
+
+  // tags
+  renderDetailTags();
+  // photos
+  renderDetailPhotos();
+  // stages
+  renderStages(item, collection);
+
+  switchModalTab('info', document.querySelector('.modal-tab'));
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function renderStages(item, collection){
+  const cont=document.getElementById('stagesContent');
+  cont.innerHTML='';
+
+  if(collection==='reels'){
+    const complexity=item.complexity||'simple';
+    const sliders=SLIDER_STAGES[complexity]||SLIDER_STAGES.simple;
+    const binaries=BINARY_STAGES_REEL[complexity]||[];
+
+    // binary: shoot first (if exists)
+    binaries.filter(b=>!b.isPost).forEach(b=>{
+      const isDone=item.stages&&item.stages[b.id];
+      cont.innerHTML+=binaryHTML(b, isDone, 'reels');
+    });
+    // sliders
+    sliders.forEach(s=>{
+      const val=(item.stages&&item.stages[s.id])||0;
+      cont.innerHTML+=sliderHTML(s, val, 'reels');
+    });
+    // postinG
+    binaries.filter(b=>b.isPost).forEach(b=>{
+      const isDone=item.stages&&item.stages[b.id];
+      cont.innerHTML+=binaryHTML(b, isDone, 'reels', '1% від загального');
+    });
+
+  } else if(collection==='photos'){
+    PHOTO_STAGES.forEach(s=>{
+      if(s.type==='binary'){
+        const isDone=item.stages&&item.stages[s.id];
+        cont.innerHTML+=binaryHTML(s, isDone, 'photos', s.isPost?'фінальний етап':'');
+      } else {
+        const val=(item.stages&&item.stages[s.id])||0;
+        cont.innerHTML+=sliderHTML(s, val, 'photos');
+      }
+    });
+  } else {
+    DESIGN_STAGES.forEach(s=>{
+      if(s.type==='binary'){
+        const isDone=item.stages&&item.stages[s.id];
+        cont.innerHTML+=binaryHTML(s, isDone, 'designs', s.isPost?'фінальний етап':'');
+      } else {
+        const val=(item.stages&&item.stages[s.id])||0;
+        cont.innerHTML+=sliderHTML(s, val, 'designs');
+      }
+    });
+  }
+
+  // attach slider events after render
+  cont.querySelectorAll('input[type=range]').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const stageId=e.target.dataset.stage;
+      const val=parseInt(e.target.value);
+      e.target.parentElement.querySelector('.stage-track-fill').style.width=val+'%';
+      e.target.closest('.stage-slider-item').querySelector('.stage-slider-pct').textContent=val+'%';
+      e.target.closest('.stage-slider-item').classList.toggle('done-stage', val===100);
+    });
+  });
+}
+
+function sliderHTML(s, val, collection){
+  return `<div class="stage-slider-item ${val===100?'done-stage':''}">
+    <div class="stage-slider-head">
+      <div class="stage-slider-name"><span class="stage-slider-icon">${s.icon}</span>${s.name}</div>
+      <div class="stage-slider-pct">${val}%</div>
+    </div>
+    <div class="stage-track">
+      <div class="stage-track-fill" style="width:${val}%"></div>
+      <input type="range" min="0" max="100" value="${val}" data-stage="${s.id}" data-collection="${collection}">
+    </div>
+  </div>`;
+}
+
+function binaryHTML(s, isDone, collection, note=''){
+  return `<div class="stage-binary ${isDone?'done-stage':''}" onclick="toggleBinaryStage('${collection}','${s.id}',this)">
+    <div class="stage-binary-left">
+      <div class="stage-binary-check"></div>
+      <span>${s.icon} ${s.name}</span>
+    </div>
+    ${note?`<span class="stage-binary-note">${note}</span>`:''}
+  </div>`;
+}
+
+window.toggleBinaryStage = function(collection, stageId, el) {
+  if(!detailId) return;
+  el.classList.toggle('done-stage');
+}
+
+window.pickDComplexity = function(val, el) {
+  detailComplexity=val;
+  document.querySelectorAll('#dCpPick .cp-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  // re-render stages with new complexity if needed
+  const data=detailCollection==='reels'?reels:detailCollection==='photos'?photos:designs;
+  const item={...data[detailId], complexity:val};
+  renderStages(item, detailCollection);
+}
+
+window.pickDResp = function(val, el) {
+  detailResp=val;
+  document.querySelectorAll('#dRespPick .rp-btn').forEach(b=>b.className='rp-btn');
+  el.className=`rp-btn active-${val}`;
+}
+
+window.handleDTag = function(e) {
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();
+    const v=e.target.value.trim();
+    if(v){detailTags.push(v);e.target.value='';renderDetailTags();}
+  }
+}
+
+function renderDetailTags(){
+  const wrap=document.getElementById('dTagWrap');
+  const input=document.getElementById('dTagInput');
+  wrap.innerHTML='';
+  detailTags.forEach((t,i)=>{
+    const tag=document.createElement('div');tag.className='tag';
+    tag.innerHTML=`${t}<span class="tag-x" onclick="removeDTag(${i})">×</span>`;
+    wrap.appendChild(tag);
+  });
+  wrap.appendChild(input);
+}
+
+window.removeDTag = function(i){detailTags.splice(i,1);renderDetailTags();}
+
+window.handlePhotoUpload = function(e) {
+  const files=Array.from(e.target.files);
+  files.forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{detailPhotos.push(ev.target.result);renderDetailPhotos();};
+    reader.readAsDataURL(f);
+  });
+}
+
+function renderDetailPhotos(){
+  const grid=document.getElementById('dPhotoGrid');
+  grid.innerHTML=detailPhotos.map((src,i)=>`
+    <div class="photo-thumb">
+      <img src="${src}" alt="">
+      <button class="photo-thumb-del" onclick="removeDetailPhoto(${i})">×</button>
+    </div>`).join('');
+}
+
+window.removeDetailPhoto = function(i){detailPhotos.splice(i,1);renderDetailPhotos();}
+
+window.saveDetail = function() {
+  if(!detailId) return;
+  const name=document.getElementById('dName').value.trim();
+  if(!name) return;
+
+  // collect slider values
+  const stages={};
+  document.querySelectorAll('#stagesContent input[type=range]').forEach(inp=>{
+    stages[inp.dataset.stage]=parseInt(inp.value);
+  });
+  // collect binary values
+  document.querySelectorAll('#stagesContent .stage-binary').forEach(el=>{
+    const stageId=el.getAttribute('onclick').match(/'([^']+)',this/)?.[1];
+    // parse stageId from onclick
+  });
+  // better: read binary by class
+  document.querySelectorAll('#stagesContent .stage-binary').forEach(el=>{
+    const oc=el.getAttribute('onclick');
+    const m=oc.match(/'[^']+','([^']+)'/);
+    if(m) stages[m[1]]=el.classList.contains('done-stage')?true:null;
+  });
+
+  const upd={name, responsible:detailResp, deadline:document.getElementById('dDeadline').value||null,
+    notes:document.getElementById('dNotes').value, tags:detailTags, photos:detailPhotos, stages};
+  if(detailCollection==='reels') upd.complexity=detailComplexity;
+  update(ref(db,`${detailCollection}/${detailId}`),upd);
+  closeModals();
+}
+
+window.deleteCurrentItem = function() {
+  if(!detailId||!confirm('Видалити?')) return;
+  remove(ref(db,`${detailCollection}/${detailId}`));
+  closeModals();
+}
+
+window.switchModalTab = function(tabId, btn) {
+  currentModalTabId=tabId;
+  document.querySelectorAll('.modal-tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('mtab-'+tabId)?.classList.add('active');
+  // find correct tab button
+  document.querySelectorAll('.modal-tab').forEach(t=>{
+    if(t.getAttribute('onclick')?.includes("'"+tabId+"'")) t.classList.add('active');
+  });
+}
+
+// ===== ADD MODAL =====
+window.openAddModal = function(collection) {
+  addCollection=collection;addComplexity='simple';addResp='tier';
+  document.getElementById('aName').value='';
+  document.getElementById('aDeadline').value='';
+  document.getElementById('aComplexityWrap').style.display=collection==='reels'?'block':'none';
+  document.querySelectorAll('#aCpPick .cp-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('#aCpPick .cp-btn.simple').classList.add('active');
+  document.querySelectorAll('#aRespPick .rp-btn').forEach(b=>b.className='rp-btn');
+  document.querySelector('#aRespPick .rp-btn').className='rp-btn active-tier';
+  const titles={reels:'🎬 Новий рілз',photos:'📸 Нова фото-тематика',designs:'🎨 Новий дизайн'};
+  document.getElementById('addModalTitle').textContent=titles[collection];
+  document.getElementById('addModal').classList.add('open');
+  setTimeout(()=>document.getElementById('aName').focus(),100);
+}
+
+window.pickAComplexity = function(val,el){
+  addComplexity=val;
+  document.querySelectorAll('#aCpPick .cp-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+window.pickAResp = function(val,el){
+  addResp=val;
+  document.querySelectorAll('#aRespPick .rp-btn').forEach(b=>b.className='rp-btn');
+  el.className=`rp-btn active-${val}`;
+}
+
+window.saveAdd = function() {
+  const name=document.getElementById('aName').value.trim();
+  if(!name)return;
+  const item={name,deadline:document.getElementById('aDeadline').value||null,stages:{},responsible:addResp,tags:[],photos:[],createdAt:Date.now()};
+  if(addCollection==='reels') item.complexity=addComplexity;
+  push(ref(db,addCollection),item);
+  closeModals();
+}
+
+// ===== CALENDAR =====
+function renderCalendar(){
+  const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  document.getElementById('calMonthLabel').textContent=months[calMonth]+' '+calYear;
+  const grid=document.getElementById('calGrid');
+  grid.innerHTML='';
+  const todayStr=toDateStr(new Date());
+
+  // collect deadlines
+  const deadlines={};
+  const addDL=(item,type)=>{if(item.deadline){if(!deadlines[item.deadline])deadlines[item.deadline]=[];deadlines[item.deadline].push({name:item.name,type});}};
+  Object.values(reels).forEach(r=>addDL(r,r.complexity||'simple'));
+  Object.values(photos).forEach(p=>addDL(p,'photo'));
+  Object.values(designs).forEach(d=>addDL(d,'design'));
+  Object.values(shoots).forEach(s=>{if(s.date){if(!deadlines[s.date])deadlines[s.date]=[];deadlines[s.date].push({name:'📸 '+s.name,type:'shoot'});}});
+
+  // full 7-day grid
+  let d=new Date(calYear,calMonth,1);
+  const startDow=d.getDay();
+  const offset=startDow===0?6:startDow-1;
+  d.setDate(d.getDate()-offset);
+
+  const totalCells=42;
+  for(let i=0;i<totalCells;i++){
+    const dow=d.getDay();
+    const isWeekend=dow===0||dow===6;
+    const ds=toDateStr(d);
+    const isToday=ds===todayStr;
+    const isOther=d.getMonth()!==calMonth;
+    const cell=document.createElement('div');
+    cell.className='cal-cell'+(isToday?' today':'')+(isWeekend?' weekend-cell':'')+(isOther?' other-month':'');
+    const items=deadlines[ds]||[];
+    cell.innerHTML=`<div class="cal-day-num">${d.getDate()}</div><span class="cal-add-hint">＋</span>
+      <div class="cal-items">${items.map(it=>`<div class="cal-item ${it.type}" title="${it.name}">${it.name}</div>`).join('')}</div>`;
+    const dateStr=ds;
+    cell.addEventListener('click',()=>openCalAdd(dateStr));
+    grid.appendChild(cell);
+    d.setDate(d.getDate()+1);
+  }
+}
+
+window.calPrev=function(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+window.calNext=function(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+
+window.openCalAdd=function(dateStr){
+  calTargetDate=dateStr;calComplexity='simple';calResp='tier';calAddType='reels';
+  document.getElementById('calAddTitle').textContent='📅 '+fmtDate(dateStr);
+  document.getElementById('calAddName').value='';
+  document.getElementById('calAddType').value='reels';
+  document.getElementById('calComplexityField').style.display='block';
+  document.getElementById('calRespField').style.display='block';
+  document.querySelectorAll('#calCpPick .cp-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('#calCpPick .cp-btn.simple').classList.add('active');
+  document.querySelectorAll('#calRespPick .rp-btn').forEach(b=>b.className='rp-btn');
+  document.querySelector('#calRespPick .rp-btn').className='rp-btn active-tier';
+  document.getElementById('calAddModal').classList.add('open');
+  setTimeout(()=>document.getElementById('calAddName').focus(),100);
+}
+
+window.onCalTypeChange=function(){
+  const type=document.getElementById('calAddType').value;
+  calAddType=type;
+  document.getElementById('calComplexityField').style.display=type==='reels'?'block':'none';
+  document.getElementById('calRespField').style.display=type==='shoots'?'none':'block';
+}
+
+window.pickCalComplexity=function(val,el){calComplexity=val;document.querySelectorAll('#calCpPick .cp-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+window.pickCalResp=function(val,el){calResp=val;document.querySelectorAll('#calRespPick .rp-btn').forEach(b=>b.className='rp-btn');el.className=`rp-btn active-${val}`;}
+
+window.saveCalAdd=function(){
+  const name=document.getElementById('calAddName').value.trim();
+  if(!name)return;
+  const type=calAddType;
+  if(type==='shoots'){
+    push(ref(db,'shoots'),{name,date:calTargetDate,tags:[],createdAt:Date.now()});
+  } else {
+    const item={name,deadline:calTargetDate,stages:{},responsible:calResp,tags:[],photos:[],createdAt:Date.now()};
+    if(type==='reels') item.complexity=calComplexity;
+    push(ref(db,type),item);
+  }
+  closeModals();
+}
+
+// ===== SHOOTING =====
+function renderShooting(){
+  const el=document.getElementById('shootingList');
+  const list=Object.entries(shoots).sort((a,b)=>(b[1].date||'').localeCompare(a[1].date||''));
+  if(!list.length){el.innerHTML='<div class="empty"><div class="big">🎥</div>Знімальних днів ще немає</div>';return;}
+  el.innerHTML=list.map(([id,s])=>`
+    <div class="shoot-card">
+      <div class="shoot-icon">🎥</div>
+      <div class="shoot-info">
+        <div class="shoot-date">${s.date?fmtDate(s.date):''}</div>
+        <div class="shoot-name">${s.name}</div>
+        <div class="shoot-tags">${(s.tags||[]).map(t=>`<span class="shoot-tag">${t}</span>`).join('')}</div>
+      </div>
+      <button class="shoot-del" onclick="event.stopPropagation();deleteShoot('${id}')">×</button>
+    </div>`).join('');
+}
+
+window.openShootAdd=function(){
+  shootTags=[];
+  document.getElementById('shootName').value='';
+  document.getElementById('shootDate').value=toDateStr(new Date());
+  renderShootTags();
+  document.getElementById('shootAddModal').classList.add('open');
+  setTimeout(()=>document.getElementById('shootName').focus(),100);
+}
+
+window.handleShootTag=function(e){
+  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim();if(v){shootTags.push(v);e.target.value='';renderShootTags();}}
+}
+
+function renderShootTags(){
+  const wrap=document.getElementById('shootTagWrap'),input=document.getElementById('shootTagInput');
+  wrap.innerHTML='';
+  shootTags.forEach((t,i)=>{const tag=document.createElement('div');tag.className='tag';tag.innerHTML=`${t}<span class="tag-x" onclick="removeShootTag(${i})">×</span>`;wrap.appendChild(tag);});
+  wrap.appendChild(input);
+}
+
+window.removeShootTag=function(i){shootTags.splice(i,1);renderShootTags();}
+
+window.saveShoot=function(){
+  const name=document.getElementById('shootName').value.trim();
+  if(!name)return;
+  const lt=document.getElementById('shootTagInput').value.trim();
+  if(lt)shootTags.push(lt);
+  push(ref(db,'shoots'),{name,date:document.getElementById('shootDate').value,tags:shootTags,createdAt:Date.now()});
+  closeModals();
+}
+
+window.deleteShoot=function(id){if(!confirm('Видалити?'))return;remove(ref(db,'shoots/'+id));}
+
+// ===== IDEAS =====
+function renderIdeas(){
+  const el=document.getElementById('ideasList');
+  const list=Object.entries(ideas);
+  if(!list.length){el.innerHTML='<div class="empty"><div class="big">💡</div>Ідей поки немає</div>';return;}
+  const sl={dev:'🔄 В розробці',approved:'✅ Затверджено',rejected:'❌ Відхилено'};
+  el.innerHTML=list.map(([id,idea])=>`
+    <div class="idea-card" onclick="openIdeaDetail('${id}')">
+      <div class="idea-icon">💡</div>
+      <div class="idea-info">
+        <div class="idea-title">${idea.title}</div>
+        ${idea.desc?`<div class="idea-desc">${idea.desc}</div>`:''}
+        ${(idea.photos||[]).length?`<div style="margin-top:8px;font-size:11px;color:var(--muted)">🖼 ${idea.photos.length} фото</div>`:''}
+        <div class="idea-status ${idea.status||'dev'}">${sl[idea.status||'dev']}</div>
+      </div>
+      <button class="idea-del" onclick="event.stopPropagation();deleteIdea('${id}')">×</button>
+    </div>`).join('');
+}
+
+window.openIdeaAdd=function(){
+  ideaPhotos=[];
+  document.getElementById('ideaTitleInput').value='';
+  document.getElementById('ideaDescInput').value='';
+  document.getElementById('ideaStatusInput').value='dev';
+  document.getElementById('ideaPhotoGrid').innerHTML='';
+  document.getElementById('ideaAddModal').classList.add('open');
+  setTimeout(()=>document.getElementById('ideaTitleInput').focus(),100);
+}
+
+window.handleIdeaPhotoUpload=function(e){
+  Array.from(e.target.files).forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{ideaPhotos.push(ev.target.result);renderIdeaPhotos();};
+    reader.readAsDataURL(f);
+  });
+}
+
+function renderIdeaPhotos(){
+  document.getElementById('ideaPhotoGrid').innerHTML=ideaPhotos.map((src,i)=>`
+    <div class="photo-thumb"><img src="${src}" alt=""><button class="photo-thumb-del" onclick="removeIdeaPhoto(${i})">×</button></div>`).join('');
+}
+
+window.removeIdeaPhoto=function(i){ideaPhotos.splice(i,1);renderIdeaPhotos();}
+
+window.saveIdeaAdd=function(){
+  const title=document.getElementById('ideaTitleInput').value.trim();
+  if(!title)return;
+  push(ref(db,'ideas'),{title,desc:document.getElementById('ideaDescInput').value.trim(),status:document.getElementById('ideaStatusInput').value,photos:ideaPhotos,createdAt:Date.now()});
+  closeModals();
+}
+
+window.openIdeaDetail=function(id){
+  // simple edit for now - reuse add modal prefilled
+  const idea=ideas[id];if(!idea)return;
+  ideaPhotos=[...(idea.photos||[])];
+  document.getElementById('ideaTitleInput').value=idea.title||'';
+  document.getElementById('ideaDescInput').value=idea.desc||'';
+  document.getElementById('ideaStatusInput').value=idea.status||'dev';
+  renderIdeaPhotos();
+  // override save to update
+  window._editIdeaId=id;
+  document.getElementById('ideaAddModal').classList.add('open');
+  // patch save button
+  document.querySelector('#ideaAddModal .btn-save').onclick=function(){
+    const title=document.getElementById('ideaTitleInput').value.trim();
+    if(!title)return;
+    update(ref(db,'ideas/'+id),{title,desc:document.getElementById('ideaDescInput').value.trim(),status:document.getElementById('ideaStatusInput').value,photos:ideaPhotos});
+    closeModals();
+  };
+}
+
+window.deleteIdea=function(id){if(!confirm('Видалити?'))return;remove(ref(db,'ideas/'+id));}
+
+// ===== ASAICHI =====
+function renderAsaichi(){
+  const pct=tierPct();
+  const workDays=settings.workDays||20;
+  const dailyTarget=parseFloat((100/workDays).toFixed(1));
+  const todayStr=toDateStr(new Date());
+  const todayLog=dayLogs[todayStr];
+
+  // Today card
+  document.getElementById('asaichiPct').textContent=pct;
+  document.getElementById('asaichiDayLabel').textContent='⛩ '+formatDateUA(new Date());
+  document.getElementById('asaichiSub').textContent=`tier · ${dailyTarget}% на день · ${workDays} робочих днів`;
+
+  // Fish for today
+  const todayGain=todayLog?.gainPct??null;
+  const fishKey=todayGain!=null?getFishForPct(todayGain,dailyTarget):null;
+  const fishImg=document.getElementById('asaichiFishImg');
+  const fishPhrase=document.getElementById('asaichiFishPhrase');
+  if(fishKey){
+    fishImg.src=FISH_DATA[fishKey].src;
+    fishImg.style.display='block';
+    const phrase=todayLog.phrase||randomPhrase(fishKey);
+    fishPhrase.innerHTML=phrase.replace('\n','<em>')+('</em>');
+  } else {
+    fishImg.style.display='none';
+    fishPhrase.textContent='Опиши свій день і оціни продуктивність ↓';
+  }
+
+  // Today note
+  if(todayLog?.note) document.getElementById('todayNote').value=todayLog.note;
+
+  // Fish grid
+  const grid=document.getElementById('fishGrid');
+  grid.innerHTML='';
+  for(let d=1;d<=workDays;d++){
+    const cell=document.createElement('div');
+    const isToday=d===workDays; // placeholder - needs start date
+    const log=null; // will be populated when start date feature added
+    cell.className='fish-cell'+(isToday?' today':'');
+    const targetPct=Math.round((d/workDays)*100);
+    cell.innerHTML=`<div class="fish-day-num">${d}</div><div class="fish-pct-small">${targetPct}%</div><div class="fish-emoji-small">🐟</div>`;
+    cell.addEventListener('click',()=>openFishDay(d));
+    grid.appendChild(cell);
+  }
+
+  // Tier list
+  const tierItems=[
+    ...Object.entries(reels).filter(([,r])=>!r.responsible||r.responsible==='tier').map(([id,r])=>({id,col:'reels',...r,_pct:reelPct(r)})),
+    ...Object.entries(photos).filter(([,p])=>!p.responsible||p.responsible==='tier').map(([id,p])=>({id,col:'photos',...p,_pct:photoPct(p)})),
+    ...Object.entries(designs).filter(([,d])=>d.responsible==='tier').map(([id,d])=>({id,col:'designs',...d,_pct:designPct(d)})),
+  ].sort((a,b)=>b._pct-a._pct);
+
+  const el=document.getElementById('asaichiList');
+  if(!tierItems.length){el.innerHTML='<div class="empty">Контент tier ще не додано</div>';return;}
+  el.innerHTML=tierItems.map(item=>{
+    const icon=item.col==='photos'?'📸':item.col==='designs'?'🎨':(COMPLEXITY_ICON[item.complexity]||'🎬');
+    const cls=item.col==='photos'?'photo':item.col==='designs'?'design':(item.complexity||'simple');
+    const pc=item._pct>=100?'done':item._pct>=30?'mid':'low';
+    return `<div class="asaichi-content-item">
+      <div class="aci-badge ${cls}">${icon}</div>
+      <div class="aci-info">
+        <div class="aci-name">${item.name}</div>
+        <div class="aci-meta">${item.deadline?'📅 '+fmtDate(item.deadline):''}</div>
+      </div>
+      <div class="aci-pct ${pc}" style="color:${item._pct>=100?'var(--green)':item._pct>=30?'var(--orange)':'var(--muted)'}">${item._pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+window.openFishDay=function(dayNum){
+  document.getElementById('fishDayTitle').textContent=`День ${dayNum}`;
+  document.getElementById('fishDayContent').textContent='Натисни "Оцінити продуктивність" на сьогодні щоб заповнити картку дня.';
+  document.getElementById('fishDayModal').classList.add('open');
+}
+
+window.saveTodayNote=function(){
+  const note=document.getElementById('todayNote').value.trim();
+  const todayStr=toDateStr(new Date());
+  const existing=dayLogs[todayStr]||{};
+  set(ref(db,'dayLogs/'+todayStr),{...existing,note});
+}
+
+window.runAiEval=async function(){
+  const note=document.getElementById('todayNote').value.trim();
+  if(!note){alert('Спочатку напиши що робила сьогодні!');return;}
+  const btn=document.getElementById('btnAiEval');
+  btn.classList.add('loading');btn.textContent='✨ Аналізую...';
+  const result=document.getElementById('aiResult');
+
+  const workDays=settings.workDays||20;
+  const dailyTarget=parseFloat((100/workDays).toFixed(1));
+  const tierItems=[
+    ...Object.values(reels).filter(r=>!r.responsible||r.responsible==='tier').map(r=>r.name),
+    ...Object.values(photos).filter(p=>!p.responsible||p.responsible==='tier').map(p=>p.name),
+    ...Object.values(designs).filter(d=>d.responsible==='tier').map(d=>d.name),
+  ];
+
+  try {
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Ти — чесний але дотепний асистент для оцінки продуктивності контент-продюсера. 
+Щоденна норма: ${dailyTarget}% від плану. 
+Поточний контент plan: ${tierItems.join(', ')}.
+Оціни нотатку і дай відповідь у форматі JSON (без markdown): 
+{"gainPct": число від 0 до 15, "verdict": "текст 1-2 речення", "fish": "karass|skumbria|shark"}
+karass якщо gainPct < ${dailyTarget}, skumbria якщо ~${dailyTarget}, shark якщо > ${dailyTarget}.
+Будь трохи саркастичною але supportive.`,
+        messages:[{role:'user',content:note}]
+      })
+    });
+    const data=await resp.json();
+    const text=data.content?.[0]?.text||'{}';
+    let parsed;
+    try{parsed=JSON.parse(text.replace(/```json|```/g,'').trim());}
+    catch{parsed={gainPct:dailyTarget,verdict:'Непогано!',fish:'skumbria'};}
+
+    const {gainPct=dailyTarget, verdict='', fish='skumbria'}=parsed;
+    const todayStr=toDateStr(new Date());
+    const phrase=randomPhrase(fish);
+    set(ref(db,'dayLogs/'+todayStr),{note,gainPct,fish,phrase,verdict,savedAt:Date.now()});
+
+    result.classList.add('show');
+    result.innerHTML=`<b>${gainPct}%</b> приросту · ${verdict}<br><span style="color:var(--muted);font-size:12px">${FISH_DATA[fish].phrases[0]}</span>`;
+  } catch(e){
+    result.classList.add('show');
+    result.textContent='Помилка підключення до ШІ. Спробуй ще раз.';
+  }
+  btn.classList.remove('loading');btn.textContent='✨ Оцінити продуктивність';
+}
+
+// ===== SLIDERS =====
+window.onSlider=function(){
+  const rv=parseInt(document.getElementById('reelsSlider').value);
+  const pv=parseInt(document.getElementById('photoSlider').value);
+  const dv=parseInt(document.getElementById('designSlider').value);
+  const wd=parseInt(document.getElementById('daysSlider').value);
+  document.getElementById('reelsValDisp').textContent=rv;
+  document.getElementById('photoValDisp').textContent=pv;
+  document.getElementById('designValDisp').textContent=dv;
+  document.getElementById('daysValDisp').textContent=wd;
+  set(ref(db,'settings'),{reelsTarget:rv,photoTarget:pv,designTarget:dv,workDays:wd});
+}
+
+// ===== REPORT =====
+window.generateReport=function(){
+  const box=document.getElementById('reportBox');
+  const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  const today=new Date();
+  let txt=`📊 МІСЯЧНИЙ ЗВІТ — ${months[today.getMonth()]} ${today.getFullYear()}\n`;
+  txt+=`Дата: ${today.toLocaleDateString('uk-UA')}\n\n`;
+  txt+=`✅ Загальний прогрес: ${totalPct()}%\n`;
+  txt+=`⛩ Tier прогрес: ${tierPct()}%\n\n`;
+  txt+=`🎬 Рілзи:\n`;
+  Object.values(reels).forEach(r=>{txt+=`  • [${reelPct(r)}%] ${r.name} (${COMPLEXITY_LABEL[r.complexity]||''}, ${r.responsible||'tier'})\n`;});
+  txt+=`\n📸 Фото:\n`;
+  Object.values(photos).forEach(p=>{txt+=`  • [${photoPct(p)}%] ${p.name} (${p.responsible||'tier'})\n`;});
+  txt+=`\n🎨 Дизайн:\n`;
+  Object.values(designs).forEach(d=>{txt+=`  • [${designPct(d)}%] ${d.name} (${d.responsible||'tier'})\n`;});
+  box.textContent=txt;
+  box.style.display=box.style.display==='block'?'none':'block';
+}
+
+// ===== UTILS =====
+window.switchTab=function(tab,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+window.closeModals=function(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));}
+
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)closeModals();});});
+
+function toDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmtDate(str){if(!str)return'';const d=new Date(str+'T00:00:00');return d.toLocaleDateString('uk-UA',{day:'numeric',month:'short'});}
+function formatDateUA(d){return d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});}
+</script>
+</body>
+</html>
