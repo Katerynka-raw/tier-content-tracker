@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tier Content Plan</title>
-<link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -690,6 +689,11 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
   </div>
 </div>
 
+<script>
+// Global bridge for onclick handlers - delegates to module functions
+function switchMonth(dir){ window._switchMonth && window._switchMonth(dir); }
+function switchTab(tab,btn){ window._switchTab && window._switchTab(tab,btn); }
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -936,10 +940,14 @@ function updateMonthUI(){
   });
 }
 
-window.switchMonth=async function(dir){
+window._switchMonth=async function(dir){
   const targetKey = dir>0 ? nextMonthKey(currentMonthKey) : prevMonthKey(currentMonthKey);
-  if(dir>0 && targetKey > realMonthKey){
-    alert('Не можна перейти в майбутнє 🔮');
+  // Allow up to 2 months ahead (for planning)
+  const realDate = monthKeyToDate(realMonthKey);
+  realDate.setMonth(realDate.getMonth()+2);
+  const maxKey = toMonthKey(realDate);
+  if(dir>0 && targetKey >= maxKey){
+    alert('Не можна планувати так далеко вперед 🔮');
     return;
   }
   // Check if next month exists
@@ -1868,7 +1876,7 @@ window.generateReport=function(){
 }
 
 // ===== UTILS =====
-window.switchTab=function(tab,btn){
+window._switchTab=function(tab,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
