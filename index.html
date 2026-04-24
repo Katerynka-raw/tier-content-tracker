@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tier Content Plan</title>
-<link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -38,6 +37,17 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sync-badge{margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;padding:5px 12px;border-radius:100px;}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:syncPulse 2s infinite;}
 @keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* MONTH SWITCHER */
+.month-switcher-bar{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 20px;background:rgba(10,10,15,0.8);border-bottom:1px solid var(--line);position:sticky;top:49px;z-index:99;backdrop-filter:blur(10px);}
+.month-arrow{background:var(--card2);border:1px solid var(--line2);color:var(--text);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.month-arrow:hover{border-color:var(--accent);color:var(--accent);}
+.month-switcher-label{display:flex;align-items:center;gap:8px;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:var(--text);}
+.month-readonly-badge{background:var(--orange-dim);border:1px solid rgba(255,107,53,0.3);color:var(--orange);border-radius:6px;padding:2px 8px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;}
+.readonly-overlay{pointer-events:none;opacity:0.6;}
+.new-month-banner{background:linear-gradient(135deg,rgba(200,255,0,0.1),rgba(200,255,0,0.04));border:1px solid var(--accent-border);border-radius:16px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.new-month-text{font-size:14px;color:var(--text);}
+.new-month-text b{color:var(--accent);}
 
 /* PAGES */
 .page{display:none;padding:24px 20px 80px;max-width:920px;margin:0 auto;position:relative;z-index:1;}
@@ -296,7 +306,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
 
 /* Fish grid */
 .fish-grid-section{margin-bottom:20px;}
-.fish-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;}
+.fish-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
 .fish-cell{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px 4px;text-align:center;cursor:pointer;transition:all .15s;}
 .fish-cell:hover{border-color:var(--line2);}
 .fish-cell.today{border-color:var(--orange);background:rgba(255,107,53,0.08);}
@@ -304,6 +314,9 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
 .fish-cell.logged.karass{border-color:rgba(155,127,232,0.3);background:var(--purple-dim);}
 .fish-cell.logged.krop{border-color:var(--accent-border);background:var(--accent-dim);}
 .fish-cell.logged.sword{border-color:rgba(255,107,53,0.3);background:var(--orange-dim);}
+.fish-cell.fish-weekend{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.04);opacity:.4;cursor:default!important;}
+.fish-cell.fish-missed{background:var(--surface);border-color:var(--line);opacity:.6;}
+.fish-cell.fish-missed .fish-emoji-small{color:var(--muted);}
 .fish-day-num{font-family:'Unbounded',sans-serif;font-size:8px;font-weight:700;color:var(--muted);}
 .fish-cell.today .fish-day-num{color:var(--orange);}
 .fish-cell.logged .fish-day-num{color:var(--text);}
@@ -358,6 +371,16 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
   <div class="sync-badge"><span class="sync-dot"></span>LIVE</div>
 </nav>
 
+<!-- MONTH SWITCHER -->
+<div class="month-switcher-bar">
+  <button class="month-arrow" onclick="switchMonth(-1)">‹</button>
+  <div class="month-switcher-label">
+    <span id="currentMonthLabel">Квітень 2026</span>
+    <span class="month-readonly-badge" id="readonlyBadge" style="display:none">👁 Архів</span>
+  </div>
+  <button class="month-arrow" onclick="switchMonth(1)">›</button>
+</div>
+
 <!-- DASHBOARD -->
 <div class="page active" id="page-dashboard">
   <div class="page-header">
@@ -377,7 +400,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
       <div class="slider-group"><label>Рілзів <span class="slider-val" id="reelsValDisp">12</span></label><input type="range" id="reelsSlider" min="0" max="15" value="12" oninput="onSlider()"></div>
       <div class="slider-group"><label>Фото-тематик <span class="slider-val" id="photoValDisp">4</span></label><input type="range" id="photoSlider" min="0" max="15" value="4" oninput="onSlider()"></div>
       <div class="slider-group"><label>Дизайн <span class="slider-val" id="designValDisp">6</span></label><input type="range" id="designSlider" min="0" max="15" value="6" oninput="onSlider()"></div>
-      <div class="slider-group"><label>Робочих днів <span class="slider-val" id="daysValDisp">20</span></label><input type="range" id="daysSlider" min="10" max="30" value="20" oninput="onSlider()"></div>
+
     </div>
   </div>
   <div class="section-title" style="margin-bottom:12px">🔥 В роботі</div>
@@ -460,11 +483,12 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
     <div class="today-note-wrap">
       <div class="today-note-label">📝 Що зробила сьогодні</div>
       <textarea class="today-note-input" id="todayNote" rows="3" placeholder="Опиши своїми словами що робила сьогодні..."></textarea>
-      <div class="today-note-actions">
-        <button class="btn-ai" id="btnAiEval" onclick="runAiEval()">✨ Оцінити продуктивність</button>
-        <button class="btn-secondary" style="font-size:12px;padding:7px 14px" onclick="saveTodayNote()">Зберегти</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">
+        <div style="background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--muted);">
+          Приріст за день: <span id="autoGainDisp" style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:900;color:var(--accent);">—</span>
+        </div>
+        <button class="btn-secondary" style="font-size:12px;padding:8px 16px" onclick="saveTodayNote()">Зберегти день ✓</button>
       </div>
-      <div class="ai-result" id="aiResult"></div>
     </div>
   </div>
 
@@ -719,37 +743,37 @@ const DESIGN_STAGES = [
 const COMPLEXITY_LABEL = {simple:'Простий', medium:'Середній', complex:'Складний'};
 const COMPLEXITY_ICON  = {simple:'🟢', medium:'🟡', complex:'🔴'};
 
-// FISH CONFIG — using base64 placeholders until real images provided
-// Images: karass=карась(orange border), skumbria=скумбрія, shark=акула-іграшка
+// FISH CONFIG
+const GITHUB = 'https://katerynka-raw.github.io/tier-content-tracker/';
 const FISH_DATA = {
   karass: {
-    src: '/mnt/user-data/uploads/Untitled-1.png',
-    threshold: 'below',   // < dailyTarget
+    src: GITHUB + 'image_2026-04-23_10-23-48.png',
     phrases: [
       "таке чуство, шо бог десь наказує нас за шось",
       "ну... буває. завтра краще",
       "карась теж риба. майже.",
       "сьогодні відпочиваємо. душею.",
+      "все ок, головне що ти є.",
     ]
   },
   skumbria: {
-    src: '/mnt/user-data/uploads/1776937734416_image_2026-04-23_10-29-25.png',
-    threshold: 'equal',   // = dailyTarget
+    src: GITHUB + 'image_2026-04-23_10-29-25.png',
     phrases: [
       "ааай молодець!",
       "чітко по плану. шановаємо.",
       "стабільність — теж талант",
-      "рівно 5%. ні більше ні менше. майстер.",
+      "рівно по нормі. майстер.",
+      "так тримати!",
     ]
   },
   shark: {
-    src: '/mnt/user-data/uploads/1776937743547_image_2026-04-23_10-59-50.png',
-    threshold: 'above',   // > dailyTarget
+    src: GITHUB + 'image_2026-04-23_10-59-50.png',
     phrases: [
       "астанавітєсь\n*не астанавлюйся",
       "хто дав дозвіл бути такою продуктивною??",
       "плану мало — бери більше рілзів",
       "акула не спить. і ти теж.",
+      "це вже занадто добре. підозріло.",
     ]
   }
 };
@@ -765,9 +789,13 @@ function randomPhrase(fishKey) {
   return phrases[Math.floor(Math.random() * phrases.length)];
 }
 
+function toDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
 // STATE
-let reels={}, photos={}, designs={}, shoots={}, ideas={}, settings={reelsTarget:12,photoTarget:4,designTarget:6,workDays:20};
-let dayLogs={};  // {dateStr: {note, gainPct, fish}}
+let allData = {}; // {monthKey: {reels, photos, designs, shoots, settings, dayLogs}}
+let ideas = {};
+let reels={}, photos={}, designs={}, shoots={}, dayLogs={};
+let settings={reelsTarget:12,photoTarget:4,designTarget:6};
 let calYear, calMonth;
 let addCollection = 'reels';
 let addComplexity = 'simple';
@@ -785,33 +813,176 @@ let detailPhotos = [];
 let shootTags = [];
 let ideaPhotos = [];
 let currentModalTabId = 'info';
+let isReadonly = false;
 
 const now = new Date();
 calYear = now.getFullYear();
 calMonth = now.getMonth();
 
-// FIREBASE
-onValue(ref(db,'reels'), s=>{reels=s.val()||{};renderAll();});
-onValue(ref(db,'photos'), s=>{photos=s.val()||{};renderAll();});
-onValue(ref(db,'designs'), s=>{designs=s.val()||{};renderAll();});
-onValue(ref(db,'shoots'), s=>{shoots=s.val()||{};renderShooting();renderCalendar();});
-onValue(ref(db,'ideas'), s=>{ideas=s.val()||{};renderIdeas();});
-onValue(ref(db,'dayLogs'), s=>{dayLogs=s.val()||{};renderAsaichi();});
-onValue(ref(db,'settings'), s=>{
-  if(s.val()){
-    settings={...settings,...s.val()};
-    document.getElementById('reelsSlider').value=settings.reelsTarget||12;
-    document.getElementById('photoSlider').value=settings.photoTarget||4;
-    document.getElementById('designSlider').value=settings.designTarget||6;
-    document.getElementById('daysSlider').value=settings.workDays||20;
-    ['reels','photo','design','days'].forEach(k=>{
-      const map={reels:'reelsTarget',photo:'photoTarget',design:'designTarget',days:'workDays'};
-      document.getElementById(k+'ValDisp').textContent=settings[map[k]]||0;
-    });
+// Current active month key (e.g. "2026-04")
+const realNow = new Date();
+const realMonthKey = toMonthKey(realNow);
+let currentMonthKey = realMonthKey;
+
+function toMonthKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function monthKeyToDate(k){ const [y,m]=k.split('-'); return new Date(parseInt(y),parseInt(m)-1,1); }
+function monthKeyLabel(k){
+  const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  const [y,m]=k.split('-');
+  return months[parseInt(m)-1]+' '+y;
+}
+function nextMonthKey(k){ const d=monthKeyToDate(k); d.setMonth(d.getMonth()+1); return toMonthKey(d); }
+function prevMonthKey(k){ const d=monthKeyToDate(k); d.setMonth(d.getMonth()-1); return toMonthKey(d); }
+
+// Count workdays in a month
+function countWorkdays(monthKey){
+  const [y,m]=monthKey.split('-');
+  const daysInMonth=new Date(parseInt(y),parseInt(m),0).getDate();
+  let count=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const dow=new Date(parseInt(y),parseInt(m)-1,d).getDay();
+    if(dow!==0&&dow!==6) count++;
   }
-});
+  return count;
+}
+
+// FIREBASE - month-aware structure
+// Data lives at /months/{monthKey}/reels, /months/{monthKey}/photos, etc.
+// ideas live at /ideas (global)
+
+function loadMonth(monthKey){
+  // Migrate old data to april 2026 on first load
+  const migrateOldData = ()=>{
+    onValue(ref(db,'reels'), snap=>{
+      const old=snap.val();
+      if(old){
+        Object.entries(old).forEach(([id,item])=>{
+          if(!item.month) set(ref(db,`months/2026-04/reels/${id}`),{...item,month:'2026-04'});
+        });
+      }
+    },{onlyOnce:true});
+    onValue(ref(db,'photos'), snap=>{
+      const old=snap.val();
+      if(old) Object.entries(old).forEach(([id,item])=>{
+        if(!item.month) set(ref(db,`months/2026-04/photos/${id}`),{...item,month:'2026-04'});
+      });
+    },{onlyOnce:true});
+    onValue(ref(db,'designs'), snap=>{
+      const old=snap.val();
+      if(old) Object.entries(old).forEach(([id,item])=>{
+        if(!item.month) set(ref(db,`months/2026-04/designs/${id}`),{...item,month:'2026-04'});
+      });
+    },{onlyOnce:true});
+    onValue(ref(db,'shoots'), snap=>{
+      const old=snap.val();
+      if(old) Object.entries(old).forEach(([id,item])=>{
+        if(!item.month) set(ref(db,`months/2026-04/shoots/${id}`),{...item,month:'2026-04'});
+      });
+    },{onlyOnce:true});
+    onValue(ref(db,'settings'), snap=>{
+      const old=snap.val();
+      if(old&&!old.migrated) {
+        set(ref(db,`months/2026-04/settings`),{...old,migrated:true});
+        set(ref(db,'settings/migrated'),true);
+      }
+    },{onlyOnce:true});
+  };
+  migrateOldData();
+
+  onValue(ref(db,`months/${monthKey}/reels`), s=>{reels=s.val()||{};renderAll();});
+  onValue(ref(db,`months/${monthKey}/photos`), s=>{photos=s.val()||{};renderAll();});
+  onValue(ref(db,`months/${monthKey}/designs`), s=>{designs=s.val()||{};renderAll();});
+  onValue(ref(db,`months/${monthKey}/shoots`), s=>{shoots=s.val()||{};renderShooting();renderCalendar();});
+  onValue(ref(db,`months/${monthKey}/dayLogs`), s=>{dayLogs=s.val()||{};renderAsaichi();});
+  onValue(ref(db,`months/${monthKey}/settings`), s=>{
+    if(s.val()){
+      settings={reelsTarget:12,photoTarget:4,designTarget:6,...s.val()};
+    } else {
+      settings={reelsTarget:12,photoTarget:4,designTarget:6};
+    }
+    const rv=settings.reelsTarget||0;
+    const pv=settings.photoTarget||0;
+    const dv=settings.designTarget||0;
+    document.getElementById('reelsSlider').value=rv;
+    document.getElementById('photoSlider').value=pv;
+    document.getElementById('designSlider').value=dv;
+    document.getElementById('reelsValDisp').textContent=rv;
+    document.getElementById('photoValDisp').textContent=pv;
+    document.getElementById('designValDisp').textContent=dv;
+    renderDashboard();
+  });
+}
+
+onValue(ref(db,'ideas'), s=>{ideas=s.val()||{};renderIdeas();});
+
+// Init
+loadMonth(currentMonthKey);
+updateMonthUI();
 
 function renderAll(){renderDashboard();renderContentList('reels');renderContentList('photos');renderContentList('designs');renderCalendar();renderAsaichi();}
+
+function updateMonthUI(){
+  document.getElementById('currentMonthLabel').textContent=monthKeyLabel(currentMonthKey);
+  isReadonly = currentMonthKey !== realMonthKey;
+  document.getElementById('readonlyBadge').style.display=isReadonly?'inline-flex':'none';
+  // disable add buttons in readonly
+  document.querySelectorAll('.btn-primary').forEach(b=>{
+    b.style.opacity=isReadonly?'0.4':'1';
+    b.style.pointerEvents=isReadonly?'none':'auto';
+  });
+  document.querySelectorAll('input[type=range]').forEach(inp=>{
+    inp.disabled=isReadonly;
+  });
+}
+
+window.switchMonth=async function(dir){
+  const targetKey = dir>0 ? nextMonthKey(currentMonthKey) : prevMonthKey(currentMonthKey);
+  if(dir>0 && targetKey > realMonthKey){
+    alert('Не можна перейти в майбутнє 🔮');
+    return;
+  }
+  // Check if next month exists
+  if(dir>0){
+    const snap = await new Promise(res=>onValue(ref(db,`months/${targetKey}`),res,{onlyOnce:true}));
+    if(!snap.val()){
+      const ok = confirm(`Створити ${monthKeyLabel(targetKey)}?
+
+Незавершений контент можна буде перенести.`);
+      if(!ok) return;
+      // Ask about transferring unfinished items
+      const unfinished = [
+        ...Object.entries(reels).filter(([,r])=>reelPct(r)<100),
+        ...Object.entries(photos).filter(([,p])=>photoPct(p)<100),
+        ...Object.entries(designs).filter(([,d])=>designPct(d)<100),
+      ];
+      if(unfinished.length>0){
+        const transfer = confirm(`Є ${unfinished.length} незавершених одиниць контенту.
+Перенести в ${monthKeyLabel(targetKey)}?`);
+        if(transfer){
+          for(const [id,item] of unfinished){
+            const col = reels[id]?'reels':photos[id]?'photos':'designs';
+            const transfers=(item.transfers||0)+1;
+            const marker='🔁'.repeat(Math.min(transfers,3));
+            // Add to new month
+            await set(ref(db,`months/${targetKey}/${col}/${id}`),{...item,month:targetKey,transfers,transferredFrom:currentMonthKey});
+            // Mark in current month as transferred
+            await update(ref(db,`months/${currentMonthKey}/${col}/${id}`),{transferredTo:targetKey,transferMark:marker});
+          }
+        }
+      }
+      // Create new month settings
+      await set(ref(db,`months/${targetKey}/settings`),{reelsTarget:12,photoTarget:4,designTarget:6});
+    }
+  }
+  currentMonthKey = targetKey;
+  // Reload listeners for new month
+  loadMonth(currentMonthKey);
+  updateMonthUI();
+  // Reset calendar to new month
+  const d = monthKeyToDate(targetKey);
+  calYear=d.getFullYear(); calMonth=d.getMonth();
+  renderCalendar();
+}
 
 // ===== PCT CALC =====
 function reelPct(reel){
@@ -913,6 +1084,15 @@ function renderInProgress(){
     ...Object.entries(designs).map(([id,d])=>({id,col:'designs',...d,_pct:designPct(d)})),
   ].filter(x=>x._pct>0&&x._pct<100).sort((a,b)=>b._pct-a._pct);
   const el=document.getElementById('inProgressList');
+  // Show new month banner if month is empty
+  const totalItems=Object.keys(reels).length+Object.keys(photos).length+Object.keys(designs).length;
+  const isNewMonth=totalItems===0&&currentMonthKey===realMonthKey;
+  if(isNewMonth){
+    el.innerHTML=`<div class="new-month-banner">
+      <div class="new-month-text">🌱 <b>${monthKeyLabel(currentMonthKey)}</b> — новий місяць! Настя може додати контент план.</div>
+    </div>`;
+    return;
+  }
   if(!all.length){el.innerHTML='<div class="empty"><div class="big">✨</div>Все або не розпочато, або завершено</div>';return;}
   el.innerHTML=all.map(item=>{
     const icon=item.col==='photos'?'📸':item.col==='designs'?'🎨':(COMPLEXITY_ICON[item.complexity]||'🎬');
@@ -954,12 +1134,13 @@ function renderContentList(collection){
       <div class="content-card-head">
         <div class="complexity-badge ${cls}">${icon}</div>
         <div class="content-info">
-          <div class="content-name">${item.name}</div>
+          <div class="content-name">${item.transferMark?item.transferMark+' ':''} ${item.name}</div>
           <div class="content-meta">
             ${collection==='reels'?`<span>${COMPLEXITY_LABEL[item.complexity]||''}</span>`:''}
             ${item.deadline?`<span>📅 ${fmtDate(item.deadline)}</span>`:''}
             <span class="resp-badge resp-${resp}">${resp}</span>
             <span>${pct}%</span>
+            ${item.transferredTo?`<span style="color:var(--muted);font-size:10px">→ перенесено</span>`:''}
           </div>
         </div>
         <div class="content-pct ${pc}">${pct}%</div>
@@ -1180,13 +1361,13 @@ window.saveDetail = function() {
   const upd={name, responsible:detailResp, deadline:document.getElementById('dDeadline').value||null,
     notes:document.getElementById('dNotes').value, tags:detailTags, photos:detailPhotos, stages};
   if(detailCollection==='reels') upd.complexity=detailComplexity;
-  update(ref(db,`${detailCollection}/${detailId}`),upd);
+  update(ref(db,`months/${currentMonthKey}/${detailCollection}/${detailId}`),upd);
   closeModals();
 }
 
 window.deleteCurrentItem = function() {
   if(!detailId||!confirm('Видалити?')) return;
-  remove(ref(db,`${detailCollection}/${detailId}`));
+  remove(ref(db,`months/${currentMonthKey}/${detailCollection}/${detailId}`));
   closeModals();
 }
 
@@ -1231,9 +1412,10 @@ window.pickAResp = function(val,el){
 window.saveAdd = function() {
   const name=document.getElementById('aName').value.trim();
   if(!name)return;
-  const item={name,deadline:document.getElementById('aDeadline').value||null,stages:{},responsible:addResp,tags:[],photos:[],createdAt:Date.now()};
+  if(isReadonly){alert('Архівний місяць — тільки перегляд');return;}
+  const item={name,deadline:document.getElementById('aDeadline').value||null,stages:{},responsible:addResp,tags:[],photos:[],createdAt:Date.now(),month:currentMonthKey};
   if(addCollection==='reels') item.complexity=addComplexity;
-  push(ref(db,addCollection),item);
+  push(ref(db,`months/${currentMonthKey}/${addCollection}`),item);
   closeModals();
 }
 
@@ -1310,12 +1492,13 @@ window.saveCalAdd=function(){
   const name=document.getElementById('calAddName').value.trim();
   if(!name)return;
   const type=calAddType;
+  if(isReadonly){alert('Архівний місяць — тільки перегляд');return;}
   if(type==='shoots'){
-    push(ref(db,'shoots'),{name,date:calTargetDate,tags:[],createdAt:Date.now()});
+    push(ref(db,`months/${currentMonthKey}/shoots`),{name,date:calTargetDate,tags:[],createdAt:Date.now(),month:currentMonthKey});
   } else {
-    const item={name,deadline:calTargetDate,stages:{},responsible:calResp,tags:[],photos:[],createdAt:Date.now()};
+    const item={name,deadline:calTargetDate,stages:{},responsible:calResp,tags:[],photos:[],createdAt:Date.now(),month:currentMonthKey};
     if(type==='reels') item.complexity=calComplexity;
-    push(ref(db,type),item);
+    push(ref(db,`months/${currentMonthKey}/${type}`),item);
   }
   closeModals();
 }
@@ -1364,11 +1547,12 @@ window.saveShoot=function(){
   if(!name)return;
   const lt=document.getElementById('shootTagInput').value.trim();
   if(lt)shootTags.push(lt);
-  push(ref(db,'shoots'),{name,date:document.getElementById('shootDate').value,tags:shootTags,createdAt:Date.now()});
+  if(isReadonly){alert('Архівний місяць — тільки перегляд');return;}
+  push(ref(db,`months/${currentMonthKey}/shoots`),{name,date:document.getElementById('shootDate').value,tags:shootTags,createdAt:Date.now(),month:currentMonthKey});
   closeModals();
 }
 
-window.deleteShoot=function(id){if(!confirm('Видалити?'))return;remove(ref(db,'shoots/'+id));}
+window.deleteShoot=function(id){if(!confirm('Видалити?'))return;remove(ref(db,`months/${currentMonthKey}/shoots/${id}`));}
 
 // ===== IDEAS =====
 function renderIdeas(){
@@ -1446,15 +1630,18 @@ window.deleteIdea=function(id){if(!confirm('Видалити?'))return;remove(re
 // ===== ASAICHI =====
 function renderAsaichi(){
   const pct=tierPct();
-  const workDays=settings.workDays||20;
+  const workDays=countWorkdays(currentMonthKey);
   const dailyTarget=parseFloat((100/workDays).toFixed(1));
   const todayStr=toDateStr(new Date());
   const todayLog=dayLogs[todayStr];
 
   // Today card
   document.getElementById('asaichiPct').textContent=pct;
+  recordDayStart();
+  updateAutoGainDisp();
   document.getElementById('asaichiDayLabel').textContent='⛩ '+formatDateUA(new Date());
-  document.getElementById('asaichiSub').textContent=`tier · ${dailyTarget}% на день · ${workDays} робочих днів`;
+  const autoWorkdays=countWorkdays(currentMonthKey);
+  document.getElementById('asaichiSub').textContent=`tier · ${dailyTarget}% на день · ${autoWorkdays} робочих днів`;
 
   // Fish for today
   const todayGain=todayLog?.gainPct??null;
@@ -1474,17 +1661,91 @@ function renderAsaichi(){
   // Today note
   if(todayLog?.note) document.getElementById('todayNote').value=todayLog.note;
 
-  // Fish grid
+  // Fish grid — real calendar dates, 7-col layout starting Monday
   const grid=document.getElementById('fishGrid');
   grid.innerHTML='';
-  for(let d=1;d<=workDays;d++){
+
+  // Add weekday headers
+  ['пн','вт','ср','чт','пт','сб','нд'].forEach(wd=>{
+    const h=document.createElement('div');
+    h.style.cssText='text-align:center;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:4px 0;';
+    h.textContent=wd;
+    grid.appendChild(h);
+  });
+
+  const nowD=new Date(); nowD.setHours(0,0,0,0);
+  const yr=nowD.getFullYear(), mo=nowD.getMonth();
+  const daysInMonth=new Date(yr,mo+1,0).getDate();
+
+  // count total workdays in month
+  let totalWorkdays=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const dow=new Date(yr,mo,d).getDay();
+    if(dow!==0&&dow!==6) totalWorkdays++;
+  }
+
+  // count workdays passed up to and including today
+  let workdaysPassed=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(yr,mo,d); dt.setHours(0,0,0,0);
+    const dow=dt.getDay();
+    if(dow!==0&&dow!==6){
+      if(dt<=nowD) workdaysPassed++;
+    }
+  }
+
+  const expectedPct=totalWorkdays?Math.round((workdaysPassed/totalWorkdays)*100):0;
+  document.getElementById('asaichiSub').textContent=
+    `tier · ${dailyTarget}% на день · ${totalWorkdays} робочих днів · очікується ${expectedPct}%`;
+
+  // offset: first day of month
+  const firstDow=new Date(yr,mo,1).getDay();
+  const offset=firstDow===0?6:firstDow-1;
+  for(let i=0;i<offset;i++){
+    const blank=document.createElement('div');
+    grid.appendChild(blank);
+  }
+
+  // render each day
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(yr,mo,d); dt.setHours(0,0,0,0);
+    const ds=toDateStr(dt);
+    const dow=dt.getDay();
+    const isWeekend=dow===0||dow===6;
+    const isToday=ds===todayStr;
+    const isPast=dt<nowD;
+    const log=dayLogs[ds];
+
+    let fishKey=null;
+    if(!isWeekend&&(isPast||isToday)&&log?.fish) fishKey=log.fish;
+
     const cell=document.createElement('div');
-    const isToday=d===workDays; // placeholder - needs start date
-    const log=null; // will be populated when start date feature added
-    cell.className='fish-cell'+(isToday?' today':'');
-    const targetPct=Math.round((d/workDays)*100);
-    cell.innerHTML=`<div class="fish-day-num">${d}</div><div class="fish-pct-small">${targetPct}%</div><div class="fish-emoji-small">🐟</div>`;
-    cell.addEventListener('click',()=>openFishDay(d));
+    let cls='fish-cell';
+    if(isWeekend) cls+=' fish-weekend';
+    else if(isToday) cls+=' today';
+    else if(isPast&&log) cls+=` logged ${log.fish||''}`;
+    else if(isPast&&!log) cls+=' fish-missed';
+
+    let emoji='';
+    if(isWeekend) emoji='😴';
+    else if(fishKey==='karass') emoji='🐟';
+    else if(fishKey==='skumbria') emoji='🎏';
+    else if(fishKey==='shark') emoji='🦈';
+    else if(isPast) emoji='—';
+    else emoji='·';
+
+    const gainPct=log?.gainPct!=null?`+${log.gainPct}%`:'';
+
+    cell.className=cls;
+    cell.innerHTML=`
+      <div class="fish-day-num">${d}</div>
+      ${gainPct?`<div class="fish-pct-small">${gainPct}</div>`:''}
+      <div class="fish-emoji-small">${emoji}</div>`;
+
+    if(!isWeekend){
+      cell.style.cursor='pointer';
+      cell.addEventListener('click',()=>openFishDay(ds, d, log));
+    }
     grid.appendChild(cell);
   }
 
@@ -1512,82 +1773,77 @@ function renderAsaichi(){
   }).join('');
 }
 
-window.openFishDay=function(dayNum){
-  document.getElementById('fishDayTitle').textContent=`День ${dayNum}`;
-  document.getElementById('fishDayContent').textContent='Натисни "Оцінити продуктивність" на сьогодні щоб заповнити картку дня.';
+window.openFishDay=function(dateStr, dayNum, log){
+  const dt=new Date(dateStr+'T00:00:00');
+  const label=dt.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('fishDayTitle').textContent=label;
+  const todayStr=toDateStr(new Date());
+  let html='';
+  if(log){
+    const fishKey=log.fish||'skumbria';
+    const fishName={karass:'Карась 🐟',skumbria:'Скумбрія 🎏',shark:'Акула 🦈'};
+    html+=`<div style="margin-bottom:12px">
+      <span style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;color:var(--orange)">${log.gainPct||0}%</span>
+      <span style="color:var(--muted);font-size:12px;margin-left:8px">приріст за день</span>
+    </div>`;
+    html+=`<div style="margin-bottom:10px"><b>${fishName[fishKey]}</b></div>`;
+    if(log.verdict) html+=`<div style="margin-bottom:10px;color:var(--text)">${log.verdict}</div>`;
+    if(log.note) html+=`<div style="padding:10px;background:var(--surface);border-radius:8px;font-size:13px;color:var(--muted);line-height:1.6">"${log.note}"</div>`;
+  } else if(dateStr===todayStr){
+    html='<div style="color:var(--accent)">Сьогодні! Опиши свій день і натисни "Оцінити продуктивність" вгорі ↑</div>';
+  } else {
+    html='<div style="color:var(--muted)">Цей день не було залоговано.</div>';
+  }
+  document.getElementById('fishDayContent').innerHTML=html;
   document.getElementById('fishDayModal').classList.add('open');
 }
 
+// Auto-gain: track pct at day start in Firebase, calc diff on save
 window.saveTodayNote=function(){
   const note=document.getElementById('todayNote').value.trim();
   const todayStr=toDateStr(new Date());
   const existing=dayLogs[todayStr]||{};
-  set(ref(db,'dayLogs/'+todayStr),{...existing,note});
+  const currentPct=tierPct();
+  const startPct=existing.startPct!=null?existing.startPct:currentPct;
+  const gainPct=parseFloat(Math.max(0, currentPct-startPct).toFixed(1));
+  const workDays=countWorkdays(currentMonthKey);
+  const dailyTarget=parseFloat((100/workDays).toFixed(1));
+  const fish=gainPct<dailyTarget?'karass':gainPct<=dailyTarget+0.5?'skumbria':'shark';
+  const phrase=randomPhrase(fish);
+  set(ref(db,`months/${currentMonthKey}/dayLogs/${todayStr}`),{...existing,note,gainPct,fish,phrase,startPct,savedAt:Date.now()});
 }
 
-window.runAiEval=async function(){
-  const note=document.getElementById('todayNote').value.trim();
-  if(!note){alert('Спочатку напиши що робила сьогодні!');return;}
-  const btn=document.getElementById('btnAiEval');
-  btn.classList.add('loading');btn.textContent='✨ Аналізую...';
-  const result=document.getElementById('aiResult');
-
-  const workDays=settings.workDays||20;
-  const dailyTarget=parseFloat((100/workDays).toFixed(1));
-  const tierItems=[
-    ...Object.values(reels).filter(r=>!r.responsible||r.responsible==='tier').map(r=>r.name),
-    ...Object.values(photos).filter(p=>!p.responsible||p.responsible==='tier').map(p=>p.name),
-    ...Object.values(designs).filter(d=>d.responsible==='tier').map(d=>d.name),
-  ];
-
-  try {
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:`Ти — чесний але дотепний асистент для оцінки продуктивності контент-продюсера. 
-Щоденна норма: ${dailyTarget}% від плану. 
-Поточний контент plan: ${tierItems.join(', ')}.
-Оціни нотатку і дай відповідь у форматі JSON (без markdown): 
-{"gainPct": число від 0 до 15, "verdict": "текст 1-2 речення", "fish": "karass|skumbria|shark"}
-karass якщо gainPct < ${dailyTarget}, skumbria якщо ~${dailyTarget}, shark якщо > ${dailyTarget}.
-Будь трохи саркастичною але supportive.`,
-        messages:[{role:'user',content:note}]
-      })
-    });
-    const data=await resp.json();
-    const text=data.content?.[0]?.text||'{}';
-    let parsed;
-    try{parsed=JSON.parse(text.replace(/```json|```/g,'').trim());}
-    catch{parsed={gainPct:dailyTarget,verdict:'Непогано!',fish:'skumbria'};}
-
-    const {gainPct=dailyTarget, verdict='', fish='skumbria'}=parsed;
-    const todayStr=toDateStr(new Date());
-    const phrase=randomPhrase(fish);
-    set(ref(db,'dayLogs/'+todayStr),{note,gainPct,fish,phrase,verdict,savedAt:Date.now()});
-
-    result.classList.add('show');
-    result.innerHTML=`<b>${gainPct}%</b> приросту · ${verdict}<br><span style="color:var(--muted);font-size:12px">${FISH_DATA[fish].phrases[0]}</span>`;
-  } catch(e){
-    result.classList.add('show');
-    result.textContent='Помилка підключення до ШІ. Спробуй ще раз.';
+// Record start pct when page loads for today
+function recordDayStart(){
+  const todayStr=toDateStr(new Date());
+  const existing=dayLogs[todayStr]||{};
+  if(existing.startPct==null){
+    const currentPct=tierPct();
+    set(ref(db,`months/${currentMonthKey}/dayLogs/${todayStr}`),{...existing,startPct:currentPct});
   }
-  btn.classList.remove('loading');btn.textContent='✨ Оцінити продуктивність';
+}
+
+// Update auto gain display
+function updateAutoGainDisp(){
+  const todayStr=toDateStr(new Date());
+  const existing=dayLogs[todayStr]||{};
+  const currentPct=tierPct();
+  const startPct=existing.startPct!=null?existing.startPct:currentPct;
+  const gain=parseFloat(Math.max(0,currentPct-startPct).toFixed(1));
+  const el=document.getElementById('autoGainDisp');
+  if(el) el.textContent='+'+gain+'%';
 }
 
 // ===== SLIDERS =====
 window.onSlider=function(){
+  if(isReadonly) return;
   const rv=parseInt(document.getElementById('reelsSlider').value);
   const pv=parseInt(document.getElementById('photoSlider').value);
   const dv=parseInt(document.getElementById('designSlider').value);
-  const wd=parseInt(document.getElementById('daysSlider').value);
   document.getElementById('reelsValDisp').textContent=rv;
   document.getElementById('photoValDisp').textContent=pv;
   document.getElementById('designValDisp').textContent=dv;
-  document.getElementById('daysValDisp').textContent=wd;
-  set(ref(db,'settings'),{reelsTarget:rv,photoTarget:pv,designTarget:dv,workDays:wd});
+  set(ref(db,`months/${currentMonthKey}/settings`),{reelsTarget:rv,photoTarget:pv,designTarget:dv});
 }
 
 // ===== REPORT =====
@@ -1598,7 +1854,8 @@ window.generateReport=function(){
   let txt=`📊 МІСЯЧНИЙ ЗВІТ — ${months[today.getMonth()]} ${today.getFullYear()}\n`;
   txt+=`Дата: ${today.toLocaleDateString('uk-UA')}\n\n`;
   txt+=`✅ Загальний прогрес: ${totalPct()}%\n`;
-  txt+=`⛩ Tier прогрес: ${tierPct()}%\n\n`;
+  txt+=`⛩ Tier прогрес: ${tierPct()}%\n`;
+  txt+=`📅 Місяць: ${monthKeyLabel(currentMonthKey)}\n\n`;
   txt+=`🎬 Рілзи:\n`;
   Object.values(reels).forEach(r=>{txt+=`  • [${reelPct(r)}%] ${r.name} (${COMPLEXITY_LABEL[r.complexity]||''}, ${r.responsible||'tier'})\n`;});
   txt+=`\n📸 Фото:\n`;
@@ -1621,7 +1878,6 @@ window.closeModals=function(){document.querySelectorAll('.modal-overlay').forEac
 
 document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)closeModals();});});
 
-function toDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fmtDate(str){if(!str)return'';const d=new Date(str+'T00:00:00');return d.toLocaleDateString('uk-UA',{day:'numeric',month:'short'});}
 function formatDateUA(d){return d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});}
 </script>
