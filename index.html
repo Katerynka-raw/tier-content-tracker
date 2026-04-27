@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tier Content Plan</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -38,13 +39,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:syncPulse 2s infinite;}
 @keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* MONTH SWITCHER */
-.month-switcher-bar{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 20px;background:rgba(10,10,15,0.8);border-bottom:1px solid var(--line);position:sticky;top:49px;z-index:99;backdrop-filter:blur(10px);}
-.month-arrow{background:var(--card2);border:1px solid var(--line2);color:var(--text);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
-.month-arrow:hover{border-color:var(--accent);color:var(--accent);}
-.month-switcher-label{display:flex;align-items:center;gap:8px;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:var(--text);}
-.month-readonly-badge{background:var(--orange-dim);border:1px solid rgba(255,107,53,0.3);color:var(--orange);border-radius:6px;padding:2px 8px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;}
-.readonly-overlay{pointer-events:none;opacity:0.6;}
 .new-month-banner{background:linear-gradient(135deg,rgba(200,255,0,0.1),rgba(200,255,0,0.04));border:1px solid var(--accent-border);border-radius:16px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 .new-month-text{font-size:14px;color:var(--text);}
 .new-month-text b{color:var(--accent);}
@@ -381,8 +375,13 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
 .user-dd-item.danger{color:var(--red);}
 .user-dd-divider{height:1px;background:var(--line);margin:6px 0;}
 
-/* MANAGE USERS */
-.manage-users-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:20px;}
+/* PROFILE MODAL */
+.profile-avatar-wrap{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.profile-avatar-big{width:64px;height:64px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900;color:#0a0a0f;overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;border:2px solid var(--accent-border);}
+.profile-avatar-big img{width:100%;height:100%;object-fit:cover;}
+.profile-avatar-big:hover::after{content:'📷';position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.profile-avatar-edit{font-size:11px;color:var(--muted);margin-top:4px;}
+background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:20px;}
 .user-list-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
 .user-list-item:last-child{border-bottom:none;}
 .user-list-email{flex:1;font-size:13px;color:var(--text);}
@@ -427,21 +426,12 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
     <div class="user-dropdown" id="userDropdown">
       <div class="user-dd-item" id="ddEmail" style="color:var(--muted);cursor:default;font-size:11px;"></div>
       <div class="user-dd-divider"></div>
+      <div class="user-dd-item" onclick="showProfile()">👤 Профіль</div>
       <div class="user-dd-item" onclick="showManageUsers()" id="ddManage" style="display:none">👥 Керування користувачами</div>
       <div class="user-dd-item danger" onclick="doSignOut()">🚪 Вийти</div>
     </div>
   </div>
 </nav>
-
-<!-- MONTH SWITCHER -->
-<div class="month-switcher-bar">
-  <button class="month-arrow" onclick="switchMonth(-1)">‹</button>
-  <div class="month-switcher-label">
-    <span id="currentMonthLabel">Квітень 2026</span>
-    <span class="month-readonly-badge" id="readonlyBadge" style="display:none">👁 Архів</span>
-  </div>
-  <button class="month-arrow" onclick="switchMonth(1)">›</button>
-</div>
 
 <!-- DASHBOARD -->
 <div class="page active" id="page-dashboard">
@@ -619,8 +609,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
       <div class="modal-tab-content" id="mtab-stages">
         <div id="stagesContent"></div>
         <div style="margin-top:14px;padding:12px;background:var(--surface);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
-          💡 Повзунки: пре-продакшн, риба, саунд, колір<br>
-          Бінарні: зйомка (не впливає на %), постинг (1%)
+          💡 Порядок: Пре-продакшн → Зйомка (опційно) → Чернетка → Саунд → Колір → Постинг (1%)
         </div>
       </div>
     </div>
@@ -643,6 +632,12 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
         <div class="cp-btn medium" onclick="pickAComplexity('medium',this)"><span class="cp-icon">🟡</span><span class="cp-label">Середній</span></div>
         <div class="cp-btn complex" onclick="pickAComplexity('complex',this)"><span class="cp-icon">🔴</span><span class="cp-label">Складний</span></div>
       </div>
+    </div>
+    <div class="field-group" id="aShootWrap" style="display:none">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none">
+        <input type="checkbox" id="aHasShoot" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer">
+        <span>🎬 Потрібна зйомка</span>
+      </label>
     </div>
     <div class="field-group"><label>Відповідальний</label>
       <div class="resp-pick" id="aRespPick">
@@ -753,7 +748,6 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
 
 <script>
 // Global bridge for onclick handlers - delegates to module functions
-function switchMonth(dir){ window._switchMonth && window._switchMonth(dir); }
 function switchTab(tab,btn){ window._switchTab && window._switchTab(tab,btn); }
 </script>
 <script type="module">
@@ -836,7 +830,7 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('userMenu').style.display = 'flex';
     updateUserUI();
     applyRoleRestrictions();
-    loadMonth(currentMonthKey);
+    loadData();
     updateMonthUI();
     
   } else {
@@ -851,9 +845,14 @@ onAuthStateChanged(auth, async user => {
 
 function updateUserUI() {
   if(!currentUser) return;
-  const name = currentUser.displayName || currentUser.email;
+  const name = currentUserData?.profileName || currentUser.displayName || currentUser.email;
   const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('userAvatar').textContent = initials;
+  const avatarEl = document.getElementById('userAvatar');
+  if(currentUserData?.profilePhoto){
+    avatarEl.innerHTML = `<img src="${currentUserData.profilePhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    avatarEl.textContent = initials;
+  }
   document.getElementById('userName').textContent = name.split(' ')[0];
   document.getElementById('ddEmail').textContent = currentUser.email;
   const badge = document.getElementById('userRoleBadge');
@@ -958,28 +957,34 @@ window.removeUser = function(uid) {
 }
 
 // ===== STAGES CONFIG =====
-// slider stages: weight in % (out of 99 total, postinG=1%)
+// Порядок: Пре-продакшн → Зйомка → Чернетка → Саунд → Колір → Постинг
+// Ваги:
+//   Простий:  Чернетка 50%, Колір 49%, Постинг 1%
+//   Середній: Пре-прод 10%, Зйомка(бінар), Чернетка 35%, Колір 34%, Постинг 1%  — слайдери = 99%, shoot бінарний не рахується
+//   Складний: Пре-прод 15%, Зйомка(бінар), Чернетка 25%, Саунд 15%, Колір 24%, Постинг 1% — слайдери = 99%
 const SLIDER_STAGES = {
   simple: [
-    {id:'draft', name:'Риба + чернетка', icon:'🐟', weight:40},
-    {id:'color', name:'Колір',            icon:'🎨', weight:59},
+    {id:'draft', name:'Чернетка',       icon:'🐟', weight:50},
+    {id:'color', name:'Колір',          icon:'🎨', weight:49},
   ],
   medium: [
-    {id:'prep',  name:'Пре-продакшн',    icon:'📋', weight:20},
-    {id:'draft', name:'Риба + чернетка', icon:'🐟', weight:30},
-    {id:'color', name:'Колір',            icon:'🎨', weight:49},
+    {id:'prep',  name:'Пре-продакшн',  icon:'📋', weight:10},
+    {id:'draft', name:'Чернетка',       icon:'🐟', weight:35},
+    {id:'color', name:'Колір',          icon:'🎨', weight:34},
   ],
   complex: [
-    {id:'prep',  name:'Пре-продакшн',    icon:'📋', weight:15},
-    {id:'draft', name:'Риба + чернетка', icon:'🐟', weight:25},
-    {id:'sound', name:'Саунд дизайн',    icon:'🎵', weight:20},
-    {id:'color', name:'Колір',            icon:'🎨', weight:39},
+    {id:'prep',  name:'Пре-продакшн',  icon:'📋', weight:15},
+    {id:'draft', name:'Чернетка',       icon:'🐟', weight:25},
+    {id:'sound', name:'Саунд',          icon:'🎵', weight:15},
+    {id:'color', name:'Колір',          icon:'🎨', weight:24},
   ],
 };
+// Зйомка — опціонально (hasShoot), не впливає на %, Постинг = 1%
+// BINARY_STAGES_REEL: shoot optional binary (hasShoot flag per item), post = done
 const BINARY_STAGES_REEL = {
   simple:  [{id:'post', name:'Постинг', icon:'📤', isPost:true}],
-  medium:  [{id:'shoot', name:'Зйомка', icon:'🎬', isPost:false}, {id:'post', name:'Постинг', icon:'📤', isPost:true}],
-  complex: [{id:'shoot', name:'Зйомка', icon:'🎬', isPost:false}, {id:'post', name:'Постинг', icon:'📤', isPost:true}],
+  medium:  [{id:'shoot', name:'Зйомка', icon:'🎬', isPost:false, optional:true}, {id:'post', name:'Постинг', icon:'📤', isPost:true}],
+  complex: [{id:'shoot', name:'Зйомка', icon:'🎬', isPost:false, optional:true}, {id:'post', name:'Постинг', icon:'📤', isPost:true}],
 };
 const PHOTO_STAGES = [
   {id:'shoot', name:'Зйомка',   icon:'📷', type:'binary', isPost:false},
@@ -1102,51 +1107,14 @@ function countWorkdays(monthKey){
 // Data lives at /months/{monthKey}/reels, /months/{monthKey}/photos, etc.
 // ideas live at /ideas (global)
 
-function loadMonth(monthKey){
-  // Migrate old data to april 2026 on first load
-  const migrateOldData = ()=>{
-    onValue(ref(db,'reels'), snap=>{
-      const old=snap.val();
-      if(old){
-        Object.entries(old).forEach(([id,item])=>{
-          if(!item.month) set(ref(db,`months/2026-04/reels/${id}`),{...item,month:'2026-04'});
-        });
-      }
-    },{onlyOnce:true});
-    onValue(ref(db,'photos'), snap=>{
-      const old=snap.val();
-      if(old) Object.entries(old).forEach(([id,item])=>{
-        if(!item.month) set(ref(db,`months/2026-04/photos/${id}`),{...item,month:'2026-04'});
-      });
-    },{onlyOnce:true});
-    onValue(ref(db,'designs'), snap=>{
-      const old=snap.val();
-      if(old) Object.entries(old).forEach(([id,item])=>{
-        if(!item.month) set(ref(db,`months/2026-04/designs/${id}`),{...item,month:'2026-04'});
-      });
-    },{onlyOnce:true});
-    onValue(ref(db,'shoots'), snap=>{
-      const old=snap.val();
-      if(old) Object.entries(old).forEach(([id,item])=>{
-        if(!item.month) set(ref(db,`months/2026-04/shoots/${id}`),{...item,month:'2026-04'});
-      });
-    },{onlyOnce:true});
-    onValue(ref(db,'settings'), snap=>{
-      const old=snap.val();
-      if(old&&!old.migrated) {
-        set(ref(db,`months/2026-04/settings`),{...old,migrated:true});
-        set(ref(db,'settings/migrated'),true);
-      }
-    },{onlyOnce:true});
-  };
-  migrateOldData();
-
-  onValue(ref(db,`months/${monthKey}/reels`), s=>{reels=s.val()||{};renderAll();});
-  onValue(ref(db,`months/${monthKey}/photos`), s=>{photos=s.val()||{};renderAll();});
-  onValue(ref(db,`months/${monthKey}/designs`), s=>{designs=s.val()||{};renderAll();});
-  onValue(ref(db,`months/${monthKey}/shoots`), s=>{shoots=s.val()||{};renderShooting();renderCalendar();});
-  onValue(ref(db,`months/${monthKey}/dayLogs`), s=>{dayLogs=s.val()||{};renderAsaichi();});
-  onValue(ref(db,`months/${monthKey}/settings`), s=>{
+// ===== FIREBASE FLAT STRUCTURE: /reels, /photos, /designs, /shoots, /settings, /dayLogs =====
+function loadData(){
+  onValue(ref(db,'reels'), s=>{reels=s.val()||{};renderAll();});
+  onValue(ref(db,'photos'), s=>{photos=s.val()||{};renderAll();});
+  onValue(ref(db,'designs'), s=>{designs=s.val()||{};renderAll();});
+  onValue(ref(db,'shoots'), s=>{shoots=s.val()||{};renderShooting();renderCalendar();});
+  onValue(ref(db,'dayLogs'), s=>{dayLogs=s.val()||{};renderAsaichi();});
+  onValue(ref(db,'settings'), s=>{
     if(s.val()){
       settings={reelsTarget:12,photoTarget:4,designTarget:6,...s.val()};
     } else {
@@ -1172,70 +1140,8 @@ onValue(ref(db,'ideas'), s=>{ideas=s.val()||{};renderIdeas();});
 function renderAll(){renderDashboard();renderContentList('reels');renderContentList('photos');renderContentList('designs');renderCalendar();renderAsaichi();}
 
 function updateMonthUI(){
-  document.getElementById('currentMonthLabel').textContent=monthKeyLabel(currentMonthKey);
-  isReadonly = currentMonthKey !== realMonthKey;
-  document.getElementById('readonlyBadge').style.display=isReadonly?'inline-flex':'none';
-  // disable add buttons in readonly
-  document.querySelectorAll('.btn-primary').forEach(b=>{
-    b.style.opacity=isReadonly?'0.4':'1';
-    b.style.pointerEvents=isReadonly?'none':'auto';
-  });
-  document.querySelectorAll('input[type=range]').forEach(inp=>{
-    inp.disabled=isReadonly;
-  });
-}
-
-window._switchMonth=async function(dir){
-  const targetKey = dir>0 ? nextMonthKey(currentMonthKey) : prevMonthKey(currentMonthKey);
-  // Allow up to 2 months ahead (for planning)
-  const realDate = monthKeyToDate(realMonthKey);
-  realDate.setMonth(realDate.getMonth()+2);
-  const maxKey = toMonthKey(realDate);
-  if(dir>0 && targetKey >= maxKey){
-    alert('Не можна планувати так далеко вперед 🔮');
-    return;
-  }
-  // Check if next month exists
-  if(dir>0){
-    const snap = await new Promise(res=>onValue(ref(db,`months/${targetKey}`),res,{onlyOnce:true}));
-    if(!snap.val()){
-      const ok = confirm(`Створити ${monthKeyLabel(targetKey)}?
-
-Незавершений контент можна буде перенести.`);
-      if(!ok) return;
-      // Ask about transferring unfinished items
-      const unfinished = [
-        ...Object.entries(reels).filter(([,r])=>reelPct(r)<100),
-        ...Object.entries(photos).filter(([,p])=>photoPct(p)<100),
-        ...Object.entries(designs).filter(([,d])=>designPct(d)<100),
-      ];
-      if(unfinished.length>0){
-        const transfer = confirm(`Є ${unfinished.length} незавершених одиниць контенту.
-Перенести в ${monthKeyLabel(targetKey)}?`);
-        if(transfer){
-          for(const [id,item] of unfinished){
-            const col = reels[id]?'reels':photos[id]?'photos':'designs';
-            const transfers=(item.transfers||0)+1;
-            const marker='🔁'.repeat(Math.min(transfers,3));
-            // Add to new month
-            await set(ref(db,`months/${targetKey}/${col}/${id}`),{...item,month:targetKey,transfers,transferredFrom:currentMonthKey});
-            // Mark in current month as transferred
-            await update(ref(db,`months/${currentMonthKey}/${col}/${id}`),{transferredTo:targetKey,transferMark:marker});
-          }
-        }
-      }
-      // Create new month settings
-      await set(ref(db,`months/${targetKey}/settings`),{reelsTarget:12,photoTarget:4,designTarget:6});
-    }
-  }
-  currentMonthKey = targetKey;
-  // Reload listeners for new month
-  loadMonth(currentMonthKey);
-  updateMonthUI();
-  // Reset calendar to new month
-  const d = monthKeyToDate(targetKey);
-  calYear=d.getFullYear(); calMonth=d.getMonth();
-  renderCalendar();
+  // No month switcher anymore - always editable
+  isReadonly = false;
 }
 
 // ===== PCT CALC =====
@@ -1340,10 +1246,12 @@ function renderInProgress(){
   const el=document.getElementById('inProgressList');
   // Show new month banner if month is empty
   const totalItems=Object.keys(reels).length+Object.keys(photos).length+Object.keys(designs).length;
-  const isNewMonth=totalItems===0&&currentMonthKey===realMonthKey;
+  const isNewMonth=totalItems===0;
   if(isNewMonth){
+    const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+    const now=new Date();
     el.innerHTML=`<div class="new-month-banner">
-      <div class="new-month-text">🌱 <b>${monthKeyLabel(currentMonthKey)}</b> — новий місяць! Настя може додати контент план.</div>
+      <div class="new-month-text">🌱 <b>${months[now.getMonth()]} ${now.getFullYear()}</b> — новий місяць! Настя може додати контент план.</div>
     </div>`;
     return;
   }
@@ -1371,11 +1279,13 @@ function renderContentList(collection){
   const data=collection==='reels'?reels:collection==='photos'?photos:designs;
   const elId=collection==='reels'?'reelsList':collection==='photos'?'photoList':'designList';
   const el=document.getElementById(elId);
-  const list=Object.entries(data);
+  // Filter out done items (100%) from tabs - they exist in calendar only
+  const list=Object.entries(data).filter(([,item])=>itemPct(item,collection)<100);
   if(!list.length){
     const e={reels:'🎬',photos:'📸',designs:'🎨'};
     const n={reels:'рілзів',photos:'фото-тематик',designs:'дизайнів'};
-    el.innerHTML=`<div class="empty"><div class="big">${e[collection]}</div>${n[collection]} ще немає</div>`;
+    const all=Object.keys(data).length;
+    el.innerHTML=`<div class="empty"><div class="big">${e[collection]}</div>${all>0?'Всі '+n[collection]+' готові ✅':n[collection]+' ще немає'}</div>`;
     return;
   }
   el.innerHTML=list.map(([id,item])=>{
@@ -1454,8 +1364,9 @@ function renderStages(item, collection){
     const sliders=SLIDER_STAGES[complexity]||SLIDER_STAGES.simple;
     const binaries=BINARY_STAGES_REEL[complexity]||[];
 
-    // binary: shoot first (if exists)
+    // shoot binary — тільки якщо hasShoot=true
     binaries.filter(b=>!b.isPost).forEach(b=>{
+      if(b.optional && !item.hasShoot) return; // пропускаємо якщо зйомка не потрібна
       const isDone=item.stages&&item.stages[b.id];
       cont.innerHTML+=binaryHTML(b, isDone, 'reels');
     });
@@ -1615,13 +1526,13 @@ window.saveDetail = function() {
   const upd={name, responsible:detailResp, deadline:document.getElementById('dDeadline').value||null,
     notes:document.getElementById('dNotes').value, tags:detailTags, photos:detailPhotos, stages};
   if(detailCollection==='reels') upd.complexity=detailComplexity;
-  update(ref(db,`months/${currentMonthKey}/${detailCollection}/${detailId}`),upd);
+  update(ref(db,`${detailCollection}/${detailId}`),upd);
   closeModals();
 }
 
 window.deleteCurrentItem = function() {
   if(!detailId||!confirm('Видалити?')) return;
-  remove(ref(db,`months/${currentMonthKey}/${detailCollection}/${detailId}`));
+  remove(ref(db,`${detailCollection}/${detailId}`));
   closeModals();
 }
 
@@ -1642,6 +1553,8 @@ window.openAddModal = function(collection) {
   document.getElementById('aName').value='';
   document.getElementById('aDeadline').value='';
   document.getElementById('aComplexityWrap').style.display=collection==='reels'?'block':'none';
+  document.getElementById('aShootWrap').style.display='none';
+  if(document.getElementById('aHasShoot')) document.getElementById('aHasShoot').checked=false;
   document.querySelectorAll('#aCpPick .cp-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('#aCpPick .cp-btn.simple').classList.add('active');
   document.querySelectorAll('#aRespPick .rp-btn').forEach(b=>b.className='rp-btn');
@@ -1656,6 +1569,9 @@ window.pickAComplexity = function(val,el){
   addComplexity=val;
   document.querySelectorAll('#aCpPick .cp-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
+  // Show shoot checkbox for medium/complex
+  const shootWrap=document.getElementById('aShootWrap');
+  if(shootWrap) shootWrap.style.display=(val==='medium'||val==='complex')?'block':'none';
 }
 window.pickAResp = function(val,el){
   addResp=val;
@@ -1668,9 +1584,13 @@ window.saveAdd = function() {
   if(!name)return;
   if(isReadonly){alert('Архівний місяць — тільки перегляд');return;}
   if(!currentUser){alert('Потрібно увійти');return;}
-  const item={name,deadline:document.getElementById('aDeadline').value||null,stages:{},responsible:addResp,tags:[],photos:[],createdAt:Date.now(),month:currentMonthKey};
-  if(addCollection==='reels') item.complexity=addComplexity;
-  push(ref(db,`months/${currentMonthKey}/${addCollection}`),item);
+  const item={name,deadline:document.getElementById('aDeadline').value||null,stages:{},responsible:addResp,tags:[],photos:[],createdAt:Date.now()};
+  if(addCollection==='reels'){
+    item.complexity=addComplexity;
+    const hasShoot=document.getElementById('aHasShoot')?.checked||false;
+    item.hasShoot=hasShoot;
+  }
+  push(ref(db,`${addCollection}`),item);
   closeModals();
 }
 
@@ -1682,13 +1602,20 @@ function renderCalendar(){
   grid.innerHTML='';
   const todayStr=toDateStr(new Date());
 
-  // collect deadlines
+  // collect ALL deadlines from all collections (no filter by month)
   const deadlines={};
-  const addDL=(item,type)=>{if(item.deadline){if(!deadlines[item.deadline])deadlines[item.deadline]=[];deadlines[item.deadline].push({name:item.name,type});}};
-  Object.values(reels).forEach(r=>addDL(r,r.complexity||'simple'));
-  Object.values(photos).forEach(p=>addDL(p,'photo'));
-  Object.values(designs).forEach(d=>addDL(d,'design'));
-  Object.values(shoots).forEach(s=>{if(s.date){if(!deadlines[s.date])deadlines[s.date]=[];deadlines[s.date].push({name:'📸 '+s.name,type:'shoot'});}});
+  const addDL=(item,type,collection,id)=>{
+    if(!item.deadline) return;
+    const pct=itemPct(item,collection);
+    if(pct>=100) return; // закриті задачі (постинг=done) не показуємо
+    if(!deadlines[item.deadline]) deadlines[item.deadline]=[];
+    deadlines[item.deadline].push({name:item.name,type,collection,id});
+  };
+  Object.entries(reels).forEach(([id,r])=>addDL(r,r.complexity||'simple','reels',id));
+  Object.entries(photos).forEach(([id,p])=>addDL(p,'photo','photos',id));
+  Object.entries(designs).forEach(([id,d])=>addDL(d,'design','designs',id));
+  // shoots always show regardless of done
+  Object.values(shoots).forEach(s=>{if(s.date){if(!deadlines[s.date])deadlines[s.date]=[];deadlines[s.date].push({name:'📸 '+s.name,type:'shoot',collection:null,id:null});}});
 
   // full 7-day grid
   let d=new Date(calYear,calMonth,1);
@@ -1707,9 +1634,18 @@ function renderCalendar(){
     cell.className='cal-cell'+(isToday?' today':'')+(isWeekend?' weekend-cell':'')+(isOther?' other-month':'');
     const items=deadlines[ds]||[];
     cell.innerHTML=`<div class="cal-day-num">${d.getDate()}</div><span class="cal-add-hint">＋</span>
-      <div class="cal-items">${items.map(it=>`<div class="cal-item ${it.type}" title="${it.name}">${it.name}</div>`).join('')}</div>`;
+      <div class="cal-items">${items.map((it,idx)=>`<div class="cal-item ${it.type}" data-idx="${idx}" title="${it.name}">${it.name}</div>`).join('')}</div>`;
     const dateStr=ds;
-    cell.addEventListener('click',()=>openCalAdd(dateStr));
+    // click on cell (not on item) → open add modal
+    cell.addEventListener('click',(e)=>{
+      if(e.target.classList.contains('cal-item')){
+        const idx=parseInt(e.target.dataset.idx);
+        const it=items[idx];
+        if(it && it.collection && it.id) openDetail(it.collection, it.id);
+        return;
+      }
+      openCalAdd(dateStr);
+    });
     grid.appendChild(cell);
     d.setDate(d.getDate()+1);
   }
@@ -1749,11 +1685,11 @@ window.saveCalAdd=function(){
   const type=calAddType;
   if(isReadonly){alert('Архівний місяць — тільки перегляд');return;}
   if(type==='shoots'){
-    push(ref(db,`months/${currentMonthKey}/shoots`),{name,date:calTargetDate,tags:[],createdAt:Date.now(),month:currentMonthKey});
+    push(ref(db,'shoots'),{name,date:calTargetDate,tags:[],createdAt:Date.now()});
   } else {
-    const item={name,deadline:calTargetDate,stages:{},responsible:calResp,tags:[],photos:[],createdAt:Date.now(),month:currentMonthKey};
+    const item={name,deadline:calTargetDate,stages:{},responsible:calResp,tags:[],photos:[],createdAt:Date.now()};
     if(type==='reels') item.complexity=calComplexity;
-    push(ref(db,`months/${currentMonthKey}/${type}`),item);
+    push(ref(db,`${type}`),item);
   }
   closeModals();
 }
@@ -1803,11 +1739,11 @@ window.saveShoot=function(){
   const lt=document.getElementById('shootTagInput').value.trim();
   if(lt)shootTags.push(lt);
   if(isReadonly){alert('Архівний місяць — тільки перегляд');return;}
-  push(ref(db,`months/${currentMonthKey}/shoots`),{name,date:document.getElementById('shootDate').value,tags:shootTags,createdAt:Date.now(),month:currentMonthKey});
+  push(ref(db,'shoots'),{name,date:document.getElementById('shootDate').value,tags:shootTags,createdAt:Date.now()});
   closeModals();
 }
 
-window.deleteShoot=function(id){if(!confirm('Видалити?'))return;remove(ref(db,`months/${currentMonthKey}/shoots/${id}`));}
+window.deleteShoot=function(id){if(!confirm('Видалити?'))return;remove(ref(db,'shoots/'+id));}
 
 // ===== IDEAS =====
 function renderIdeas(){
@@ -1885,7 +1821,10 @@ window.deleteIdea=function(id){if(!confirm('Видалити?'))return;remove(re
 // ===== ASAICHI =====
 function renderAsaichi(){
   const pct=tierPct();
-  const workDays=countWorkdays(currentMonthKey);
+  const today=new Date();
+  const yr=today.getFullYear(), mo=today.getMonth();
+  const monthKey=toMonthKey(today);
+  const workDays=countWorkdays(monthKey);
   const dailyTarget=parseFloat((100/workDays).toFixed(1));
   const todayStr=toDateStr(new Date());
   const todayLog=dayLogs[todayStr];
@@ -1895,7 +1834,7 @@ function renderAsaichi(){
   recordDayStart();
   updateAutoGainDisp();
   document.getElementById('asaichiDayLabel').textContent='⛩ '+formatDateUA(new Date());
-  const autoWorkdays=countWorkdays(currentMonthKey);
+  const autoWorkdays=workDays;
   document.getElementById('asaichiSub').textContent=`tier · ${dailyTarget}% на день · ${autoWorkdays} робочих днів`;
 
   // Fish for today
@@ -1929,7 +1868,6 @@ function renderAsaichi(){
   });
 
   const nowD=new Date(); nowD.setHours(0,0,0,0);
-  const yr=nowD.getFullYear(), mo=nowD.getMonth();
   const daysInMonth=new Date(yr,mo+1,0).getDate();
 
   // count total workdays in month
@@ -2061,11 +1999,13 @@ window.saveTodayNote=function(){
   const currentPct=tierPct();
   const startPct=existing.startPct!=null?existing.startPct:currentPct;
   const gainPct=parseFloat(Math.max(0, currentPct-startPct).toFixed(1));
-  const workDays=countWorkdays(currentMonthKey);
+  const monthKey=toMonthKey(new Date());
+  const workDays=countWorkdays(monthKey);
   const dailyTarget=parseFloat((100/workDays).toFixed(1));
   const fish=gainPct<dailyTarget?'karass':gainPct<=dailyTarget+0.5?'skumbria':'shark';
   const phrase=randomPhrase(fish);
-  set(ref(db,`months/${currentMonthKey}/dayLogs/${todayStr}`),{...existing,note,gainPct,fish,phrase,startPct,savedAt:Date.now()});
+  set(ref(db,`dayLogs/${todayStr}`),{...existing,note,gainPct,fish,phrase,startPct,savedAt:Date.now()});
+}
 }
 
 // Record start pct when page loads for today
@@ -2074,7 +2014,7 @@ function recordDayStart(){
   const existing=dayLogs[todayStr]||{};
   if(existing.startPct==null){
     const currentPct=tierPct();
-    set(ref(db,`months/${currentMonthKey}/dayLogs/${todayStr}`),{...existing,startPct:currentPct});
+    set(ref(db,`dayLogs/${todayStr}`),{...existing,startPct:currentPct});
   }
 }
 
@@ -2098,7 +2038,56 @@ window.onSlider=function(){
   document.getElementById('reelsValDisp').textContent=rv;
   document.getElementById('photoValDisp').textContent=pv;
   document.getElementById('designValDisp').textContent=dv;
-  set(ref(db,`months/${currentMonthKey}/settings`),{reelsTarget:rv,photoTarget:pv,designTarget:dv});
+  set(ref(db,'settings'),{reelsTarget:rv,photoTarget:pv,designTarget:dv});
+}
+
+// ===== PROFILE =====
+let profilePhotoData = null;
+window.showProfile = function() {
+  toggleUserDropdown(true);
+  if(!currentUser) return;
+  document.getElementById('profileEmailDisp').textContent = currentUser.email;
+  document.getElementById('profileName').value = currentUserData?.profileName || currentUser.displayName || '';
+  document.getElementById('profileRole').value = currentUserData?.profileRole || '';
+  // Avatar
+  const photoUrl = currentUserData?.profilePhoto || currentUser.photoURL;
+  const initials = (currentUserData?.profileName || currentUser.displayName || currentUser.email).split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('profileAvatarInitials').textContent = initials;
+  const img = document.getElementById('profileAvatarImg');
+  if(photoUrl){img.src=photoUrl;img.style.display='block';}else{img.style.display='none';}
+  profilePhotoData = null;
+  document.getElementById('profileModal').classList.add('open');
+}
+window.handleProfilePhoto = function(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    profilePhotoData = ev.target.result;
+    const img = document.getElementById('profileAvatarImg');
+    img.src = profilePhotoData; img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+window.saveProfile = function() {
+  if(!currentUser) return;
+  const name = document.getElementById('profileName').value.trim();
+  const role = document.getElementById('profileRole').value.trim();
+  const upd = {profileName: name, profileRole: role};
+  if(profilePhotoData) upd.profilePhoto = profilePhotoData;
+  update(ref(db, `users/${currentUser.uid}`), upd);
+  // Update local state
+  if(!currentUserData) currentUserData = {};
+  Object.assign(currentUserData, upd);
+  // Update navbar avatar
+  const initials = (name || currentUser.email).split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  const avatarEl = document.getElementById('userAvatar');
+  if(profilePhotoData){
+    avatarEl.innerHTML = `<img src="${profilePhotoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    avatarEl.textContent = initials;
+  }
+  document.getElementById('userName').textContent = name.split(' ')[0] || currentUser.email;
+  closeModals();
 }
 
 // ===== REPORT =====
@@ -2109,8 +2098,7 @@ window.generateReport=function(){
   let txt=`📊 МІСЯЧНИЙ ЗВІТ — ${months[today.getMonth()]} ${today.getFullYear()}\n`;
   txt+=`Дата: ${today.toLocaleDateString('uk-UA')}\n\n`;
   txt+=`✅ Загальний прогрес: ${totalPct()}%\n`;
-  txt+=`⛩ Tier прогрес: ${tierPct()}%\n`;
-  txt+=`📅 Місяць: ${monthKeyLabel(currentMonthKey)}\n\n`;
+  txt+=`⛩ Tier прогрес: ${tierPct()}%\n\n`;
   txt+=`🎬 Рілзи:\n`;
   Object.values(reels).forEach(r=>{txt+=`  • [${reelPct(r)}%] ${r.name} (${COMPLEXITY_LABEL[r.complexity]||''}, ${r.responsible||'tier'})\n`;});
   txt+=`\n📸 Фото:\n`;
@@ -2136,6 +2124,30 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('clic
 function fmtDate(str){if(!str)return'';const d=new Date(str+'T00:00:00');return d.toLocaleDateString('uk-UA',{day:'numeric',month:'short'});}
 function formatDateUA(d){return d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});}
 </script>
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="simple-modal" style="max-width:480px">
+    <div class="simple-modal-title">👤 Профіль</div>
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar-big" id="profileAvatarBig" onclick="document.getElementById('profilePhotoInput').click()">
+        <span id="profileAvatarInitials">?</span>
+        <img id="profileAvatarImg" src="" alt="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;">
+      </div>
+      <input type="file" id="profilePhotoInput" accept="image/*" style="display:none" onchange="handleProfilePhoto(event)">
+      <div>
+        <div style="font-size:13px;color:var(--text);font-weight:600" id="profileEmailDisp"></div>
+        <div class="profile-avatar-edit">Клікни на фото щоб змінити</div>
+      </div>
+    </div>
+    <div class="field-group"><label>Ім'я</label><input type="text" id="profileName" placeholder="Твоє ім'я..."></div>
+    <div class="field-group"><label>Роль / посада</label><input type="text" id="profileRole" placeholder="Наприклад: SMM-менеджер, відеограф..."></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Скасувати</button>
+      <button class="btn-save" onclick="saveProfile()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
 <!-- MANAGE USERS MODAL -->
 <div class="modal-overlay" id="manageUsersModal">
   <div class="simple-modal" style="max-width:560px">
