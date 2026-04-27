@@ -1107,50 +1107,50 @@ function countWorkdays(monthKey){
 // Data lives at /months/{monthKey}/reels, /months/{monthKey}/photos, etc.
 // ideas live at /ideas (global)
 
-// ===== FIREBASE FLAT STRUCTURE: /reels, /photos, /designs, /shoots, /settings, /dayLogs =====
-async function migrateFromMonths(){
-  // Copy all data from /months/*/collection → /collection (flat)
-  const monthsSnap = await new Promise(res=>onValue(ref(db,'months'),res,{onlyOnce:true}));
-  const monthsData = monthsSnap.val();
-  if(!monthsData) return;
-  const cols = ['reels','photos','designs','shoots'];
-  for(const [monthKey, monthVal] of Object.entries(monthsData)){
-    for(const col of cols){
-      if(!monthVal[col]) continue;
-      for(const [id, item] of Object.entries(monthVal[col])){
-        // Only migrate if not already in flat structure
-        const existSnap = await new Promise(res=>onValue(ref(db,`${col}/${id}`),res,{onlyOnce:true}));
-        if(!existSnap.val()){
-          await set(ref(db,`${col}/${id}`),item);
-        }
-      }
-    }
-    // Migrate dayLogs
-    if(monthVal.dayLogs){
-      for(const [dateStr, log] of Object.entries(monthVal.dayLogs)){
-        const existSnap = await new Promise(res=>onValue(ref(db,`dayLogs/${dateStr}`),res,{onlyOnce:true}));
-        if(!existSnap.val()) await set(ref(db,`dayLogs/${dateStr}`),log);
-      }
-    }
-    // Migrate settings (use most recent)
-    if(monthVal.settings){
-      await set(ref(db,'settings'),{...monthVal.settings, migrated:true});
-    }
-  }
-  // Mark migration done
-  await set(ref(db,'_migrated'), true);
-}
-
+// ===== FIREBASE: читає і /reels і /months/*/reels (сумісність) =====
 function loadData(){
-  // Run migration once if needed
-  onValue(ref(db,'_migrated'), snap=>{
-    if(!snap.val()) migrateFromMonths();
-  }, {onlyOnce:true});
-
-  onValue(ref(db,'reels'), s=>{reels=s.val()||{};renderAll();});
-  onValue(ref(db,'photos'), s=>{photos=s.val()||{};renderAll();});
-  onValue(ref(db,'designs'), s=>{designs=s.val()||{};renderAll();});
-  onValue(ref(db,'shoots'), s=>{shoots=s.val()||{};renderShooting();renderCalendar();});
+  // Слухаємо плоску структуру
+  onValue(ref(db,'reels'), s=>{
+    const flat = s.val()||{};
+    // Також підтягуємо з /months якщо є
+    onValue(ref(db,'months'), ms=>{
+      const months = ms.val()||{};
+      let merged = {...flat};
+      Object.values(months).forEach(m=>{ if(m.reels) Object.assign(merged, m.reels); });
+      reels = merged;
+      renderAll();
+    },{onlyOnce:true});
+  });
+  onValue(ref(db,'photos'), s=>{
+    const flat = s.val()||{};
+    onValue(ref(db,'months'), ms=>{
+      const months = ms.val()||{};
+      let merged = {...flat};
+      Object.values(months).forEach(m=>{ if(m.photos) Object.assign(merged, m.photos); });
+      photos = merged;
+      renderAll();
+    },{onlyOnce:true});
+  });
+  onValue(ref(db,'designs'), s=>{
+    const flat = s.val()||{};
+    onValue(ref(db,'months'), ms=>{
+      const months = ms.val()||{};
+      let merged = {...flat};
+      Object.values(months).forEach(m=>{ if(m.designs) Object.assign(merged, m.designs); });
+      designs = merged;
+      renderAll();
+    },{onlyOnce:true});
+  });
+  onValue(ref(db,'shoots'), s=>{
+    const flat = s.val()||{};
+    onValue(ref(db,'months'), ms=>{
+      const months = ms.val()||{};
+      let merged = {...flat};
+      Object.values(months).forEach(m=>{ if(m.shoots) Object.assign(merged, m.shoots); });
+      shoots = merged;
+      renderShooting(); renderCalendar();
+    },{onlyOnce:true});
+  });
   onValue(ref(db,'dayLogs'), s=>{dayLogs=s.val()||{};renderAsaichi();});
   onValue(ref(db,'settings'), s=>{
     if(s.val()){
