@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tier Content Plan</title>
-<link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -354,10 +353,59 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
   .sliders-grid{grid-template-columns:1fr 1fr;}
   .fish-grid{grid-template-columns:repeat(5,1fr);}
 }
+
+/* AUTH SCREEN */
+.auth-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.auth-card{background:var(--card);border:1px solid var(--line2);border-radius:24px;padding:40px 36px;width:100%;max-width:400px;text-align:center;}
+.auth-logo{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;color:var(--accent);margin-bottom:8px;letter-spacing:-1px;}
+.auth-sub{font-size:13px;color:var(--muted);margin-bottom:32px;line-height:1.6;}
+.btn-google{background:white;color:#1a1a1a;border:none;border-radius:12px;padding:14px 24px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;transition:opacity .15s;margin-bottom:12px;}
+.btn-google:hover{opacity:.9;}
+.btn-google img{width:20px;height:20px;}
+.auth-error{background:var(--red-dim);border:1px solid rgba(255,77,109,0.3);border-radius:10px;padding:12px;font-size:13px;color:var(--red);margin-top:12px;display:none;}
+.auth-loading{color:var(--muted);font-size:13px;margin-top:12px;display:none;}
+
+/* USER MENU */
+.user-menu{position:relative;margin-left:auto;flex-shrink:0;}
+.user-btn{background:var(--card2);border:1px solid var(--line2);border-radius:10px;padding:6px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:border-color .15s;}
+.user-btn:hover{border-color:var(--muted);}
+.user-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0a0a0f;flex-shrink:0;}
+.user-name{font-size:12px;font-weight:600;color:var(--text);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:4px;}
+.user-role-badge.admin{background:var(--accent-dim);color:var(--accent);}
+.user-role-badge.member{background:var(--blue-dim);color:var(--blue);}
+.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:8px;min-width:200px;z-index:200;display:none;animation:popIn .15s ease;}
+.user-dropdown.open{display:block;}
+.user-dd-item{padding:10px 12px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:8px;}
+.user-dd-item:hover{background:var(--surface);}
+.user-dd-item.danger{color:var(--red);}
+.user-dd-divider{height:1px;background:var(--line);margin:6px 0;}
+
+/* MANAGE USERS */
+.manage-users-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:20px;}
+.user-list-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
+.user-list-item:last-child{border-bottom:none;}
+.user-list-email{flex:1;font-size:13px;color:var(--text);}
+.user-list-role{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.role-select{background:var(--surface);border:1px solid var(--line2);border-radius:6px;color:var(--text);font-size:12px;padding:4px 8px;outline:none;cursor:pointer;}
 </style>
 </head>
 <body>
 <div class="orb1"></div><div class="orb2"></div>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">TIER ✦</div>
+    <div class="auth-sub">Контент департамент<br>Увійди щоб продовжити</div>
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      Увійти через Google
+    </button>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-loading" id="authLoading">Завантаження...</div>
+  </div>
+</div>
 
 <nav class="tabs-bar">
   <div class="tabs-logo">TIER ✦</div>
@@ -369,7 +417,20 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
   <button class="tab-btn" onclick="switchTab('shooting',this)">Зйомки</button>
   <button class="tab-btn" onclick="switchTab('ideas',this)">Ідеї</button>
   <button class="tab-btn asaichi" onclick="switchTab('asaichi',this)">Asaichi</button>
-  <div class="sync-badge"><span class="sync-dot"></span>LIVE</div>
+  <div class="sync-badge" style="margin-left:8px"><span class="sync-dot"></span>LIVE</div>
+  <div class="user-menu" id="userMenu" style="display:none">
+    <div class="user-btn" onclick="toggleUserDropdown()">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div class="user-name" id="userName">—</div>
+      <span class="user-role-badge admin" id="userRoleBadge">admin</span>
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dd-item" id="ddEmail" style="color:var(--muted);cursor:default;font-size:11px;"></div>
+      <div class="user-dd-divider"></div>
+      <div class="user-dd-item" onclick="showManageUsers()" id="ddManage" style="display:none">👥 Керування користувачами</div>
+      <div class="user-dd-item danger" onclick="doSignOut()">🚪 Вийти</div>
+    </div>
+  </div>
 </nav>
 
 <!-- MONTH SWITCHER -->
@@ -698,18 +759,203 @@ function switchTab(tab,btn){ window._switchTab && window._switchTab(tab,btn); }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// ADMINS whitelist - these emails have full access
+const ADMINS = ['borysenkocot@gmail.com', 'creative@tier.ua', 'marketing@tier.ua'];
 
 const firebaseConfig = {
-  apiKey:"AIzaSyCu-ZXXh5Vs-f_-nMImghj_e12_NsD9AzE",
-  authDomain:"tier-content-department.firebaseapp.com",
-  databaseURL:"https://tier-content-department-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:"tier-content-department",
-  storageBucket:"tier-content-department.firebasestorage.app",
-  messagingSenderId:"207042594016",
-  appId:"1:207042594016:web:ff7e9bddf6de3f8479bc85"
+  apiKey:"AIzaSyA6nZPWUHhIK-VSthnXjcip2gB74rgn_W8",
+  authDomain:"tier-content-department-8ee30.firebaseapp.com",
+  databaseURL:"https://tier-content-department-8ee30-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"tier-content-department-8ee30",
+  storageBucket:"tier-content-department-8ee30.firebasestorage.app",
+  messagingSenderId:"49982737218",
+  appId:"1:49982737218:web:ebb8a07e08fc3c0d3096db"
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// Current user state
+let currentUser = null;
+let currentUserRole = null; // 'admin' | 'member'
+let currentUserData = null;
+
+// AUTH STATE LISTENER
+onAuthStateChanged(auth, async user => {
+  if(user) {
+    // Check if user is allowed
+    const userSnap = await new Promise(res => onValue(ref(db, `users/${user.uid}`), res, {onlyOnce:true}));
+    const userData = userSnap.val();
+    
+    // Check whitelist
+    const isAdmin = ADMINS.includes(user.email);
+    
+    if(!userData && !isAdmin) {
+      // Unknown user - sign out
+      await signOut(auth);
+      showAuthError('Немає доступу. Зверніться до адміністратора.');
+      return;
+    }
+    
+    if(!userData) {
+      // Check if pending user
+      const pendingKey = user.email.replace(/[.@]/g, '_');
+      const pendingSnap = await new Promise(res => onValue(ref(db, `pendingUsers/${pendingKey}`), res, {onlyOnce:true}));
+      const pendingData = pendingSnap.val();
+      
+      const role = isAdmin ? 'admin' : (pendingData?.role || null);
+      
+      if(!role && !isAdmin) {
+        await signOut(auth);
+        showAuthError('Немає доступу. Зверніться до адміністратора.');
+        return;
+      }
+      
+      // Create user record
+      await set(ref(db, `users/${user.uid}`), {
+        email: user.email,
+        name: user.displayName || user.email,
+        role: role || 'admin',
+        createdAt: Date.now()
+      });
+      
+      // Remove from pending
+      if(pendingData) remove(ref(db, `pendingUsers/${pendingKey}`));
+    }
+    
+    const role = isAdmin ? 'admin' : (userData?.role || 'member');
+    currentUser = user;
+    currentUserRole = role;
+    currentUserData = userData || {email: user.email, name: user.displayName, role};
+    
+    // Show app
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('userMenu').style.display = 'flex';
+    updateUserUI();
+    applyRoleRestrictions();
+    loadMonth(currentMonthKey);
+    updateMonthUI();
+    
+  } else {
+    // Not logged in
+    currentUser = null;
+    currentUserRole = null;
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('userMenu').style.display = 'none';
+    document.getElementById('authLoading').style.display = 'none';
+  }
+});
+
+function updateUserUI() {
+  if(!currentUser) return;
+  const name = currentUser.displayName || currentUser.email;
+  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('userName').textContent = name.split(' ')[0];
+  document.getElementById('ddEmail').textContent = currentUser.email;
+  const badge = document.getElementById('userRoleBadge');
+  badge.textContent = currentUserRole === 'admin' ? 'admin' : 'member';
+  badge.className = `user-role-badge ${currentUserRole === 'admin' ? 'admin' : 'member'}`;
+  // Show manage users only for admins
+  document.getElementById('ddManage').style.display = currentUserRole === 'admin' ? 'flex' : 'none';
+}
+
+function applyRoleRestrictions() {
+  const isAdmin = currentUserRole === 'admin';
+  // Hide Asaichi tab for non-admins
+  document.querySelectorAll('.tab-btn.asaichi').forEach(btn => {
+    btn.style.display = isAdmin ? '' : 'none';
+  });
+  // Disable sliders for non-admins
+  document.querySelectorAll('.month-settings input[type=range]').forEach(inp => {
+    if(!isAdmin) inp.disabled = true;
+  });
+}
+
+window.signInWithGoogle = async function() {
+  document.getElementById('authLoading').style.display = 'block';
+  document.getElementById('authError').style.display = 'none';
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    showAuthError('Помилка входу. Спробуй ще раз.');
+    document.getElementById('authLoading').style.display = 'none';
+  }
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+window.doSignOut = async function() {
+  await signOut(auth);
+  toggleUserDropdown(true);
+}
+
+window.toggleUserDropdown = function(forceClose) {
+  const dd = document.getElementById('userDropdown');
+  if(forceClose) { dd.classList.remove('open'); return; }
+  dd.classList.toggle('open');
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', e => {
+  const menu = document.getElementById('userMenu');
+  if(menu && !menu.contains(e.target)) {
+    document.getElementById('userDropdown')?.classList.remove('open');
+  }
+});
+
+// MANAGE USERS
+window.showManageUsers = function() {
+  toggleUserDropdown(true);
+  loadUsersList();
+  document.getElementById('manageUsersModal').classList.add('open');
+}
+
+function loadUsersList() {
+  onValue(ref(db, 'users'), snap => {
+    const users = snap.val() || {};
+    const el = document.getElementById('usersList');
+    const list = Object.entries(users);
+    if(!list.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px">Користувачів ще немає</div>'; return; }
+    el.innerHTML = list.map(([uid, u]) => `
+      <div class="user-list-item">
+        <div class="user-list-email">${u.email}<br><span style="font-size:10px;color:var(--muted)">${u.name||''}</span></div>
+        <select class="role-select" onchange="changeUserRole('${uid}', this.value)">
+          <option value="member" ${u.role==='member'?'selected':''}>👤 Учасник</option>
+          <option value="admin" ${u.role==='admin'?'selected':''}>⭐ Адмін</option>
+        </select>
+        <button onclick="removeUser('${uid}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px" title="Видалити">×</button>
+      </div>`).join('');
+  }, {onlyOnce:true});
+}
+
+window.addUser = function() {
+  const email = document.getElementById('newUserEmail').value.trim();
+  const role = document.getElementById('newUserRole').value;
+  if(!email) return;
+  // Store pending user by email (they'll get proper uid on first login)
+  const pendingKey = email.replace(/[.@]/g, '_');
+  set(ref(db, `pendingUsers/${pendingKey}`), {email, role, addedAt: Date.now()});
+  document.getElementById('newUserEmail').value = '';
+  alert(`✓ ${email} додано. Вони отримають доступ при першому вході.`);
+}
+
+window.changeUserRole = function(uid, role) {
+  update(ref(db, `users/${uid}`), {role});
+}
+
+window.removeUser = function(uid) {
+  if(!confirm('Видалити користувача?')) return;
+  remove(ref(db, `users/${uid}`));
+  loadUsersList();
+}
 
 // ===== STAGES CONFIG =====
 // slider stages: weight in % (out of 99 total, postinG=1%)
@@ -750,7 +996,7 @@ const COMPLEXITY_LABEL = {simple:'Простий', medium:'Середній', co
 const COMPLEXITY_ICON  = {simple:'🟢', medium:'🟡', complex:'🔴'};
 
 // FISH CONFIG
-const GITHUB = 'https://katerynka-raw.github.io/tier-content-tracker/';
+const GITHUB = 'https://tier-less.github.io/tier-content-tracker/';
 const FISH_DATA = {
   karass: {
     src: GITHUB + 'image_2026-04-23_10-23-48.png',
@@ -921,9 +1167,7 @@ function loadMonth(monthKey){
 
 onValue(ref(db,'ideas'), s=>{ideas=s.val()||{};renderIdeas();});
 
-// Init
-loadMonth(currentMonthKey);
-updateMonthUI();
+// Init handled by onAuthStateChanged
 
 function renderAll(){renderDashboard();renderContentList('reels');renderContentList('photos');renderContentList('designs');renderCalendar();renderAsaichi();}
 
@@ -1423,6 +1667,7 @@ window.saveAdd = function() {
   const name=document.getElementById('aName').value.trim();
   if(!name)return;
   if(isReadonly){alert('Архівний місяць — тільки перегляд');return;}
+  if(!currentUser){alert('Потрібно увійти');return;}
   const item={name,deadline:document.getElementById('aDeadline').value||null,stages:{},responsible:addResp,tags:[],photos:[],createdAt:Date.now(),month:currentMonthKey};
   if(addCollection==='reels') item.complexity=addComplexity;
   push(ref(db,`months/${currentMonthKey}/${addCollection}`),item);
@@ -1891,5 +2136,30 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('clic
 function fmtDate(str){if(!str)return'';const d=new Date(str+'T00:00:00');return d.toLocaleDateString('uk-UA',{day:'numeric',month:'short'});}
 function formatDateUA(d){return d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});}
 </script>
+<!-- MANAGE USERS MODAL -->
+<div class="modal-overlay" id="manageUsersModal">
+  <div class="simple-modal" style="max-width:560px">
+    <div class="simple-modal-title">👥 Керування користувачами</div>
+    <div class="manage-users-section" style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:12px">Додати користувача</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <input type="email" id="newUserEmail" placeholder="email@example.com" style="flex:1;background:var(--surface);border:1px solid var(--line2);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;padding:10px 13px;outline:none;min-width:200px">
+        <select id="newUserRole" style="background:var(--surface);border:1px solid var(--line2);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;padding:10px 13px;outline:none;cursor:pointer">
+          <option value="member">👤 Учасник</option>
+          <option value="admin">⭐ Адмін</option>
+        </select>
+        <button class="btn-primary" style="padding:10px 16px" onclick="addUser()">+ Додати</button>
+      </div>
+    </div>
+    <div class="manage-users-section">
+      <div class="section-title" style="margin-bottom:12px">Список користувачів</div>
+      <div id="usersList"></div>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn-cancel" onclick="closeModals()">Закрити</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
