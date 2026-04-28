@@ -2016,7 +2016,6 @@ window.saveTodayNote=function(){
   const phrase=randomPhrase(fish);
   set(ref(db,`dayLogs/${todayStr}`),{...existing,note,gainPct,fish,phrase,startPct,savedAt:Date.now()});
 }
-}
 
 // Record start pct when page loads for today
 function recordDayStart(){
