@@ -497,6 +497,20 @@ background:var(--card);border:1px solid var(--line);border-radius:18px;padding:2
 </div>
 
 <!-- DESIGN -->
+<div class="page" id="page-design">
+  <div class="page-header"><div class="page-eyebrow">фігма / графіка</div><div class="page-title">Дизайн</div></div>
+  <div class="add-bar"><button class="btn-primary" onclick="openAddModal('designs')">+ Додати дизайн</button></div>
+  <div class="content-list" id="designList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+</div>
+
+<!-- SHOOTING -->
+<div class="page" id="page-shooting">
+  <div class="page-header"><div class="page-eyebrow">знімальні дні</div><div class="page-title">Зйомки</div></div>
+  <div class="add-bar"><button class="btn-primary" onclick="openShootAdd()">+ Знімальний день</button></div>
+  <div id="shootingList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+</div>
+
+<!-- IDEAS -->
 <div class="page" id="page-ideas">
   <div class="page-header"><div class="page-eyebrow">пропозиції</div><div class="page-title">Ідеї</div></div>
   <div class="add-bar">
@@ -520,20 +534,6 @@ background:var(--card);border:1px solid var(--line);border-radius:18px;padding:2
       </optgroup>
     </select>
   </div>
-  <div id="ideasList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
-</div>
-
-<!-- SHOOTING -->
-<div class="page" id="page-shooting">
-  <div class="page-header"><div class="page-eyebrow">знімальні дні</div><div class="page-title">Зйомки</div></div>
-  <div class="add-bar"><button class="btn-primary" onclick="openShootAdd()">+ Знімальний день</button></div>
-  <div id="shootingList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
-</div>
-
-<!-- IDEAS -->
-<div class="page" id="page-ideas">
-  <div class="page-header"><div class="page-eyebrow">пропозиції</div><div class="page-title">Ідеї</div></div>
-  <div class="add-bar"><button class="btn-primary" onclick="openIdeaAdd()">+ Нова ідея</button></div>
   <div id="ideasList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
 </div>
 
