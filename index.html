@@ -497,10 +497,30 @@ background:var(--card);border:1px solid var(--line);border-radius:18px;padding:2
 </div>
 
 <!-- DESIGN -->
-<div class="page" id="page-design">
-  <div class="page-header"><div class="page-eyebrow">фігма / графіка</div><div class="page-title">Дизайн</div></div>
-  <div class="add-bar"><button class="btn-primary" onclick="openAddModal('designs')">+ Додати дизайн</button></div>
-  <div class="content-list" id="designList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
+<div class="page" id="page-ideas">
+  <div class="page-header"><div class="page-eyebrow">пропозиції</div><div class="page-title">Ідеї</div></div>
+  <div class="add-bar">
+    <button class="btn-primary" onclick="openIdeaAdd()">+ Нова ідея</button>
+    <select id="ideaFilterSelect" class="btn-secondary" style="padding: 11px 14px; font-size: 13px; outline: none; appearance: auto;" onchange="renderIdeas()">
+      <option value="all">Усі ідеї 💡</option>
+      <optgroup label="За статусом">
+        <option value="status:approved">✅ Тільки затверджені</option>
+        <option value="status:dev">🔄 Тільки в розробці</option>
+      </optgroup>
+      <optgroup label="За форматом">
+        <option value="format:Рілз">🎬 Рілзи</option>
+        <option value="format:Фото">📸 Фото</option>
+        <option value="format:Дизайн">🎨 Дизайн</option>
+      </optgroup>
+      <optgroup label="За рубрикою">
+        <option value="rubric:Tier Test Club">🔬 Tier Test Club</option>
+        <option value="rubric:Life контент">☕ Life контент</option>
+        <option value="rubric:Розважальне">🤪 Розважальне</option>
+        <option value="rubric:Пізнавальне">🧠 Пізнавальне</option>
+      </optgroup>
+    </select>
+  </div>
+  <div id="ideasList"><div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>
 </div>
 
 <!-- SHOOTING -->
