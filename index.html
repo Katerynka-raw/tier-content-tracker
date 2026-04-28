@@ -838,8 +838,8 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('userMenu').style.display = 'flex';
     updateUserUI();
     applyRoleRestrictions();
-    loadData(firebase);
-    updateMonthUI();
+    loadData();
+    firebase();
     
   } else {
     // Not logged in
