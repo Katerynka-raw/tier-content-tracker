@@ -712,6 +712,16 @@ background:var(--card);border:1px solid var(--line);border-radius:18px;padding:2
     <div class="simple-modal-title">💡 Нова ідея</div>
     <div class="field-group"><label>Назва</label><input type="text" id="ideaTitleInput" placeholder="Назва ідеї..."></div>
     <div class="field-group"><label>Опис</label><textarea id="ideaDescInput" rows="3" placeholder="Деталі..."></textarea></div>
+    
+    <div class="field-group">
+      <label>Формат (можна декілька)</label>
+      <div class="tag-input-wrap" id="ideaFormatsWrap" style="gap:5px;"></div>
+    </div>
+    <div class="field-group">
+      <label>Рубрика (можна декілька)</label>
+      <div class="tag-input-wrap" id="ideaRubricsWrap" style="gap:5px;"></div>
+    </div>
+
     <div class="field-group"><label>Статус</label>
       <select id="ideaStatusInput">
         <option value="dev">🔄 В розробці</option>
@@ -1772,6 +1782,8 @@ function renderIdeas(){
         <div class="idea-title">${idea.title}</div>
         ${idea.desc?`<div class="idea-desc">${idea.desc}</div>`:''}
         ${(idea.photos||[]).length?`<div style="margin-top:8px;font-size:11px;color:var(--muted)">🖼 ${idea.photos.length} фото</div>`:''}
+        ${(idea.formats||[]).length ? `<div style="display:flex; gap:4px; margin-top:8px">${idea.formats.map(f => `<span style="background:var(--blue-dim); color:var(--blue); padding:2px 6px; border-radius:4px; font-size:9px">${f}</span>`).join('')}</div>` : ''}
+        ${(idea.rubrics||[]).length ? `<div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px">${idea.rubrics.map(r => `<span style="background:var(--purple-dim); color:var(--purple); padding:2px 6px; border-radius:4px; font-size:9px">${r}</span>`).join('')}</div>` : ''}
         <div class="idea-status ${idea.status||'dev'}">${sl[idea.status||'dev']}</div>
       </div>
       <button class="idea-del" onclick="event.stopPropagation();deleteIdea('${id}')">×</button>
