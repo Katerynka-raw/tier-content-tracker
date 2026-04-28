@@ -1773,14 +1773,18 @@ function renderIdeas(){
     </div>`).join('');
 }
 
-window.openIdeaAdd=function(){
-  ideaPhotos=[];
-  document.getElementById('ideaTitleInput').value='';
-  document.getElementById('ideaDescInput').value='';
-  document.getElementById('ideaStatusInput').value='dev';
-  document.getElementById('ideaPhotoGrid').innerHTML='';
+window.openIdeaAdd = function() {
+  ideaPhotos = [];
+  document.getElementById('ideaTitleInput').value = '';
+  document.getElementById('ideaDescInput').value = '';
+  document.getElementById('ideaStatusInput').value = 'dev';
+  document.getElementById('ideaPhotoGrid').innerHTML = '';
+  
+  // ФІКС: Повертаємо кнопці функцію "створити нове" замість "перезаписати старе"
+  document.querySelector('#ideaAddModal .btn-save').onclick = window.saveIdeaAdd;
+  
   document.getElementById('ideaAddModal').classList.add('open');
-  setTimeout(()=>document.getElementById('ideaTitleInput').focus(),100);
+  setTimeout(() => document.getElementById('ideaTitleInput').focus(), 100);
 }
 
 window.handleIdeaPhotoUpload=function(e){
