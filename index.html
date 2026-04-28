@@ -1790,21 +1790,48 @@ window.saveShoot=function(){
 window.deleteShoot=function(id){if(!confirm('Видалити?'))return;remove(ref(db,'shoots/'+id));}
 
 // ===== IDEAS =====
-function renderIdeas(){
-  const el=document.getElementById('ideasList');
-  const list=Object.entries(ideas);
-  if(!list.length){el.innerHTML='<div class="empty"><div class="big">💡</div>Ідей поки немає</div>';return;}
-  const sl={dev:'🔄 В розробці',approved:'✅ Затверджено',rejected:'❌ Відхилено'};
-  el.innerHTML=list.map(([id,idea])=>`
+function renderIdeas() {
+  const el = document.getElementById('ideasList');
+  let list = Object.entries(ideas);
+
+  // === НОВЕ: ЛОГІКА ФІЛЬТРАЦІЇ ===
+  const filterVal = document.getElementById('ideaFilterSelect')?.value || 'all';
+  
+  if (filterVal !== 'all') {
+    // Розрізаємо значення (наприклад 'format:Рілз' -> ['format', 'Рілз'])
+    const [filterType, filterValue] = filterVal.split(':'); 
+    
+    list = list.filter(([id, idea]) => {
+      if (filterType === 'status') return (idea.status || 'dev') === filterValue;
+      if (filterType === 'format') return (idea.formats || []).includes(filterValue);
+      if (filterType === 'rubric') return (idea.rubrics || []).includes(filterValue);
+      return true;
+    });
+  }
+  // ===============================
+
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><div class="big">💡</div>За цим фільтром нічого не знайдено</div>';
+    return;
+  }
+  
+  const sl = { dev: '🔄 В розробці', approved: '✅ Затверджено', rejected: '❌ Відхилено' };
+  
+  el.innerHTML = list.map(([id, idea]) => `
     <div class="idea-card" onclick="openIdeaDetail('${id}')">
       <div class="idea-icon">💡</div>
       <div class="idea-info">
         <div class="idea-title">${idea.title}</div>
-        ${idea.desc?`<div class="idea-desc">${idea.desc}</div>`:''}
-        ${(idea.photos||[]).length?`<div style="margin-top:8px;font-size:11px;color:var(--muted)">🖼 ${idea.photos.length} фото</div>`:''}
+        ${idea.desc ? `<div class="idea-desc">${idea.desc}</div>` : ''}
+        ${(idea.photos||[]).length ? `<div style="margin-top:8px;font-size:11px;color:var(--muted)">🖼 ${idea.photos.length} фото</div>` : ''}
+        
+        ${idea.author ? `<div style="margin-top:6px;font-size:10px;color:var(--muted)">👤 Запропонував/ла: <b>${idea.author}</b></div>` : ''}
+        ${idea.lastEditedBy ? `<div style="margin-top:2px;font-size:10px;color:var(--muted)">✏️ Останні зміни: <b>${idea.lastEditedBy}</b></div>` : ''}
+        
         ${(idea.formats||[]).length ? `<div style="display:flex; gap:4px; margin-top:8px">${idea.formats.map(f => `<span style="background:var(--blue-dim); color:var(--blue); padding:2px 6px; border-radius:4px; font-size:9px">${f}</span>`).join('')}</div>` : ''}
         ${(idea.rubrics||[]).length ? `<div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px">${idea.rubrics.map(r => `<span style="background:var(--purple-dim); color:var(--purple); padding:2px 6px; border-radius:4px; font-size:9px">${r}</span>`).join('')}</div>` : ''}
-        <div class="idea-status ${idea.status||'dev'}">${sl[idea.status||'dev']}</div>
+        
+        <div class="idea-status ${idea.status || 'dev'}">${sl[idea.status || 'dev']}</div>
       </div>
       <button class="idea-del" onclick="event.stopPropagation();deleteIdea('${id}')">×</button>
     </div>`).join('');
