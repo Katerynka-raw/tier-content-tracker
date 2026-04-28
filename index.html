@@ -1790,7 +1790,7 @@ window.saveShoot=function(){
 window.deleteShoot=function(id){if(!confirm('Видалити?'))return;remove(ref(db,'shoots/'+id));}
 
 // ===== IDEAS =====
-function renderIdeas() {
+window.renderIdeas = function renderIdeas() {
   const el = document.getElementById('ideasList');
   let list = Object.entries(ideas);
 
