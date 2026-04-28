@@ -909,11 +909,16 @@ window._toggleUserDropdown = function(forceClose) {
   dd.classList.toggle('open');
 }
 
+// Витягуємо меню з-під обрізки хедера
+document.body.appendChild(document.getElementById('userDropdown'));
+
 // Close dropdown on outside click
 document.addEventListener('click', e => {
   const menu = document.getElementById('userMenu');
-  if(menu && !menu.contains(e.target)) {
-    document.getElementById('userDropdown')?.classList.remove('open');
+  const dropdown = document.getElementById('userDropdown');
+  // Закриваємо тільки якщо клік був НЕ по кнопці і НЕ по самому меню
+  if(menu && dropdown && !menu.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('open');
   }
 });
 
