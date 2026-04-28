@@ -749,6 +749,14 @@ background:var(--card);border:1px solid var(--line);border-radius:18px;padding:2
 <script>
 // Global bridge for onclick handlers - delegates to module functions
 function switchTab(tab,btn){ window._switchTab && window._switchTab(tab,btn); }
+function signInWithGoogle(){ window._signInWithGoogle && window._signInWithGoogle(); }
+function doSignOut(){ window._doSignOut && window._doSignOut(); }
+function toggleUserDropdown(f){ window._toggleUserDropdown && window._toggleUserDropdown(f); }
+function showProfile(){ window._showProfile && window._showProfile(); }
+function showManageUsers(){ window._showManageUsers && window._showManageUsers(); }
+function openDetail(col,id){ window._openDetail && window._openDetail(col,id); }
+function closeModals(){ window._closeModals && window._closeModals(); }
+function addUser(){ window._addUser && window._addUser(); }
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -874,7 +882,7 @@ function applyRoleRestrictions() {
   });
 }
 
-window.signInWithGoogle = async function() {
+window._signInWithGoogle = async function() {
   document.getElementById('authLoading').style.display = 'block';
   document.getElementById('authError').style.display = 'none';
   try {
@@ -891,12 +899,12 @@ function showAuthError(msg) {
   el.style.display = 'block';
 }
 
-window.doSignOut = async function() {
+window._doSignOut = async function() {
   await signOut(auth);
   toggleUserDropdown(true);
 }
 
-window.toggleUserDropdown = function(forceClose) {
+window._toggleUserDropdown = function(forceClose) {
   const dd = document.getElementById('userDropdown');
   if(forceClose) { dd.classList.remove('open'); return; }
   dd.classList.toggle('open');
@@ -911,7 +919,7 @@ document.addEventListener('click', e => {
 });
 
 // MANAGE USERS
-window.showManageUsers = function() {
+window._showManageUsers = function() {
   toggleUserDropdown(true);
   loadUsersList();
   document.getElementById('manageUsersModal').classList.add('open');
@@ -935,7 +943,7 @@ function loadUsersList() {
   }, {onlyOnce:true});
 }
 
-window.addUser = function() {
+window._addUser = function() {
   const email = document.getElementById('newUserEmail').value.trim();
   const role = document.getElementById('newUserRole').value;
   if(!email) return;
@@ -1317,7 +1325,7 @@ function renderContentList(collection){
 }
 
 // ===== DETAIL MODAL =====
-window.openDetail = function(collection, id) {
+window._openDetail = function(collection, id) {
   const data=collection==='reels'?reels:collection==='photos'?photos:designs;
   const item=data[id]; if(!item)return;
   detailId=id; detailCollection=collection;
@@ -2045,7 +2053,7 @@ window.onSlider=function(){
 
 // ===== PROFILE =====
 let profilePhotoData = null;
-window.showProfile = function() {
+window._showProfile = function() {
   toggleUserDropdown(true);
   if(!currentUser) return;
   document.getElementById('profileEmailDisp').textContent = currentUser.email;
@@ -2119,7 +2127,7 @@ window._switchTab=function(tab,btn){
   btn.classList.add('active');
 }
 
-window.closeModals=function(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));}
+window._closeModals=function(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));}
 
 document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)closeModals();});});
 
