@@ -1824,6 +1824,47 @@ function renderIdeaTagsUI() {
   renderTags(rubricsList, window._ideaCurrentRubrics, 'ideaRubricsWrap', false);
 }
 
+// === ГЛОБАЛЬНІ ЗМІННІ ДЛЯ ТЕГІВ ===
+window._ideaCurrentFormats = [];
+window._ideaCurrentRubrics = [];
+
+window.toggleIdeaTag = function(item, isFormat, el) {
+  const targetArray = isFormat ? window._ideaCurrentFormats : window._ideaCurrentRubrics;
+  const index = targetArray.indexOf(item);
+  if (index > -1) {
+    targetArray.splice(index, 1);
+    el.style.opacity = '0.5';
+    el.classList.remove('active');
+  } else {
+    targetArray.push(item);
+    el.style.opacity = '1';
+    el.classList.add('active');
+  }
+};
+
+window.renderIdeaTagsUI = function() {
+  const formatsList = ['Рілз', 'Дизайн', 'Фото'];
+  const rubricsList = ['Tier Test Club', 'Life контент', 'Реліз', 'Розважальне', 'Пізнавальне', 'Події', 'Аестхетік', 'Маніфести'];
+
+  const renderTags = (list, selectedArray, containerId, isFormat) => {
+    const container = document.getElementById(containerId);
+    if(!container) return; // Якщо контейнера немає, просто ігноруємо
+    
+    container.innerHTML = list.map(item => {
+      const isActive = selectedArray.includes(item);
+      return `<div class="tag ${isActive ? 'active' : ''}" 
+           style="cursor:pointer; opacity: ${isActive ? '1' : '0.5'}; user-select:none; margin-bottom:4px;"
+           onclick="toggleIdeaTag('${item}', ${isFormat}, this)">
+        ${item}
+      </div>`;
+    }).join('');
+  };
+
+  renderTags(formatsList, window._ideaCurrentFormats, 'ideaFormatsWrap', true);
+  renderTags(rubricsList, window._ideaCurrentRubrics, 'ideaRubricsWrap', false);
+};
+
+// === ФУНКЦІЇ ВІДКРИТТЯ ТА ЗБЕРЕЖЕННЯ ===
 window.openIdeaAdd = function() {
   ideaPhotos = [];
   document.getElementById('ideaTitleInput').value = '';
@@ -1833,29 +1874,29 @@ window.openIdeaAdd = function() {
   
   window._ideaCurrentFormats = [];
   window._ideaCurrentRubrics = [];
-  renderIdeaTagsUI();
+  window.renderIdeaTagsUI(); // Малюємо теги!
   
   document.querySelector('#ideaAddModal .btn-save').onclick = window.saveIdeaAdd;
   document.getElementById('ideaAddModal').classList.add('open');
   setTimeout(() => document.getElementById('ideaTitleInput').focus(), 100);
-}
+};
 
-window.handleIdeaPhotoUpload=function(e){
+window.handleIdeaPhotoUpload = function(e){
   Array.from(e.target.files).forEach(f=>{
     const reader=new FileReader();
     reader.onload=ev=>{ideaPhotos.push(ev.target.result);renderIdeaPhotos();};
     reader.readAsDataURL(f);
   });
-}
+};
 
 function renderIdeaPhotos(){
   document.getElementById('ideaPhotoGrid').innerHTML=ideaPhotos.map((src,i)=>`
     <div class="photo-thumb"><img src="${src}" alt=""><button class="photo-thumb-del" onclick="removeIdeaPhoto(${i})">×</button></div>`).join('');
 }
 
-window.removeIdeaPhoto=function(i){ideaPhotos.splice(i,1);renderIdeaPhotos();}
+window.removeIdeaPhoto = function(i){ideaPhotos.splice(i,1);renderIdeaPhotos();};
 
-window.saveIdeaAdd=function(){
+window.saveIdeaAdd = function(){
   const title=document.getElementById('ideaTitleInput').value.trim();
   if(!title)return;
   push(ref(db,'ideas'),{
@@ -1868,9 +1909,9 @@ window.saveIdeaAdd=function(){
     createdAt:Date.now()
   });
   closeModals();
-}
+};
 
-window.openIdeaDetail=function(id){
+window.openIdeaDetail = function(id){
   const idea=ideas[id];if(!idea)return;
   ideaPhotos=[...(idea.photos||[])];
   document.getElementById('ideaTitleInput').value=idea.title||'';
@@ -1880,7 +1921,7 @@ window.openIdeaDetail=function(id){
 
   window._ideaCurrentFormats = [...(idea.formats||[])];
   window._ideaCurrentRubrics = [...(idea.rubrics||[])];
-  renderIdeaTagsUI();
+  window.renderIdeaTagsUI(); // Малюємо теги для редагування!
 
   window._editIdeaId=id;
   document.getElementById('ideaAddModal').classList.add('open');
@@ -1897,7 +1938,7 @@ window.openIdeaDetail=function(id){
     });
     closeModals();
   };
-}
+};
 
 window.deleteIdea=function(id){if(!confirm('Видалити?'))return;remove(ref(db,'ideas/'+id));}
 
