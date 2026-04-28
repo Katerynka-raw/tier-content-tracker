@@ -1790,6 +1790,40 @@ function renderIdeas(){
     </div>`).join('');
 }
 
+window.toggleIdeaTag = function(item, isFormat, el) {
+  const targetArray = isFormat ? window._ideaCurrentFormats : window._ideaCurrentRubrics;
+  const index = targetArray.indexOf(item);
+  if (index > -1) {
+    targetArray.splice(index, 1);
+    el.style.opacity = '0.5';
+    el.classList.remove('active');
+  } else {
+    targetArray.push(item);
+    el.style.opacity = '1';
+    el.classList.add('active');
+  }
+}
+
+function renderIdeaTagsUI() {
+  const formatsList = ['Рілз', 'Дизайн', 'Фото'];
+  const rubricsList = ['Tier Test Club', 'Life контент', 'Реліз', 'Розважальне', 'Пізнавальне', 'Події', 'Аестхетік', 'Маніфести'];
+
+  const renderTags = (list, selectedArray, containerId, isFormat) => {
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    container.innerHTML = list.map(item => `
+      <div class="tag ${selectedArray.includes(item) ? 'active' : ''}" 
+           style="cursor:pointer; opacity: ${selectedArray.includes(item) ? '1' : '0.5'}"
+           onclick="toggleIdeaTag('${item}', ${isFormat}, this)">
+        ${item}
+      </div>
+    `).join('');
+  };
+
+  renderTags(formatsList, window._ideaCurrentFormats, 'ideaFormatsWrap', true);
+  renderTags(rubricsList, window._ideaCurrentRubrics, 'ideaRubricsWrap', false);
+}
+
 window.openIdeaAdd = function() {
   ideaPhotos = [];
   document.getElementById('ideaTitleInput').value = '';
@@ -1797,9 +1831,11 @@ window.openIdeaAdd = function() {
   document.getElementById('ideaStatusInput').value = 'dev';
   document.getElementById('ideaPhotoGrid').innerHTML = '';
   
-  // ФІКС: Повертаємо кнопці функцію "створити нове" замість "перезаписати старе"
-  document.querySelector('#ideaAddModal .btn-save').onclick = window.saveIdeaAdd;
+  window._ideaCurrentFormats = [];
+  window._ideaCurrentRubrics = [];
+  renderIdeaTagsUI();
   
+  document.querySelector('#ideaAddModal .btn-save').onclick = window.saveIdeaAdd;
   document.getElementById('ideaAddModal').classList.add('open');
   setTimeout(() => document.getElementById('ideaTitleInput').focus(), 100);
 }
@@ -1822,26 +1858,43 @@ window.removeIdeaPhoto=function(i){ideaPhotos.splice(i,1);renderIdeaPhotos();}
 window.saveIdeaAdd=function(){
   const title=document.getElementById('ideaTitleInput').value.trim();
   if(!title)return;
-  push(ref(db,'ideas'),{title,desc:document.getElementById('ideaDescInput').value.trim(),status:document.getElementById('ideaStatusInput').value,photos:ideaPhotos,createdAt:Date.now()});
+  push(ref(db,'ideas'),{
+    title,
+    desc:document.getElementById('ideaDescInput').value.trim(),
+    status:document.getElementById('ideaStatusInput').value,
+    photos:ideaPhotos,
+    formats: window._ideaCurrentFormats || [],
+    rubrics: window._ideaCurrentRubrics || [],
+    createdAt:Date.now()
+  });
   closeModals();
 }
 
 window.openIdeaDetail=function(id){
-  // simple edit for now - reuse add modal prefilled
   const idea=ideas[id];if(!idea)return;
   ideaPhotos=[...(idea.photos||[])];
   document.getElementById('ideaTitleInput').value=idea.title||'';
   document.getElementById('ideaDescInput').value=idea.desc||'';
   document.getElementById('ideaStatusInput').value=idea.status||'dev';
   renderIdeaPhotos();
-  // override save to update
+
+  window._ideaCurrentFormats = [...(idea.formats||[])];
+  window._ideaCurrentRubrics = [...(idea.rubrics||[])];
+  renderIdeaTagsUI();
+
   window._editIdeaId=id;
   document.getElementById('ideaAddModal').classList.add('open');
-  // patch save button
   document.querySelector('#ideaAddModal .btn-save').onclick=function(){
     const title=document.getElementById('ideaTitleInput').value.trim();
     if(!title)return;
-    update(ref(db,'ideas/'+id),{title,desc:document.getElementById('ideaDescInput').value.trim(),status:document.getElementById('ideaStatusInput').value,photos:ideaPhotos});
+    update(ref(db,'ideas/'+id),{
+      title,
+      desc:document.getElementById('ideaDescInput').value.trim(),
+      status:document.getElementById('ideaStatusInput').value,
+      photos:ideaPhotos,
+      formats: window._ideaCurrentFormats || [],
+      rubrics: window._ideaCurrentRubrics || []
+    });
     closeModals();
   };
 }
