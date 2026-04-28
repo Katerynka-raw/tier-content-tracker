@@ -838,7 +838,7 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('userMenu').style.display = 'flex';
     updateUserUI();
     applyRoleRestrictions();
-    loadData();
+    loadData(firebase);
     updateMonthUI();
     
   } else {
