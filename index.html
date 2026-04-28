@@ -368,7 +368,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:poi
 .user-role-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:4px;}
 .user-role-badge.admin{background:var(--accent-dim);color:var(--accent);}
 .user-role-badge.member{background:var(--blue-dim);color:var(--blue);}
-.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:8px;min-width:200px;z-index:200;display:none;animation:popIn .15s ease;}
+.user-dropdown { position: fixed; top: 60px; right: 16px; background: var(--card); border: 1px solid var(--line2); border-radius: 12px; padding: 8px; min-width: 200px; z-index: 200; display: none; animation: popIn .15s ease; }
 .user-dropdown.open{display:block;}
 .user-dd-item{padding:10px 12px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:8px;}
 .user-dd-item:hover{background:var(--surface);}
